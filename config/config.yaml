@@ -1,0 +1,12 @@
+app:
+  Version: 1.0.0
+  Port: 8080
+  Mode: development
+  Secret: 109339Lam
+mysql:
+  Host: 127.0.0.1
+  Port: 3306
+  User: root
+  Password: 109339Lam@
+  DBName: go01-airbnb
+  

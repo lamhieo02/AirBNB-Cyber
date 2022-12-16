@@ -70,10 +70,15 @@ func (r *placeRepository) ListDataWithCondition(ctx context.Context, paging *com
 }
 
 // Get place by id
-func (r *placeRepository) FindDataWithCondition(ctx context.Context, condition map[string]any) (*placemodel.Place, error) {
+func (r *placeRepository) FindDataWithCondition(ctx context.Context,
+	condition map[string]any, keys ...string) (*placemodel.Place, error) {
 	var data placemodel.Place
 
-	if err := r.db.Where(condition).First(&data).Error; err != nil {
+	db := r.db.Table(placemodel.Place{}.TableName()).Where(condition)
+	for k := range keys {
+		db = db.Preload(keys[k])
+	}
+	if err := db.First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, common.ErrEntityNotFound(placemodel.EntityName, err)
 		}

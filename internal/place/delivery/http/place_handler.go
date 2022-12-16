@@ -27,11 +27,15 @@ func NewPlaceHandler(placeUseCase PlaceUseCase, hasher *utils.Hasher) *placeHand
 
 func (hdl *placeHandler) CreatePlace() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
+		requester := ctx.MustGet("User").(common.Requester)
 		var place placemodel.Place
 
 		if err := ctx.ShouldBind(&place); err != nil {
 			panic(common.ErrBadRequest(err))
 		}
+		place.OwnerId = requester.GetUserId()
+
 		if err := hdl.placeUseCase.CreatePlace(ctx.Request.Context(), &place); err != nil {
 			panic(err)
 		}
@@ -63,8 +67,11 @@ func (hdl *placeHandler) GetPlaces() gin.HandlerFunc {
 			panic(err)
 		}
 		for i, v := range data {
-			data[i].FakeId = hdl.hasher.Encode(v.Id, 1)
-			data[i].Owner.FakeId = hdl.hasher.Encode(v.Owner.Id, 2)
+			data[i].FakeId = hdl.hasher.Encode(v.Id, common.DBTypePlace)
+			if data[i].Owner == nil {
+				continue
+			}
+			data[i].Owner.FakeId = hdl.hasher.Encode(v.Owner.Id, common.DBTypeUser)
 		}
 		ctx.JSON(http.StatusOK, common.ResponseWithPaging(data, paging))
 	}
@@ -79,7 +86,10 @@ func (hdl *placeHandler) GetPlaceById() gin.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
-		data.FakeId = hdl.hasher.Encode(data.Id, 1)
+		data.FakeId = hdl.hasher.Encode(data.Id, common.DBTypePlace)
+		if data.Owner != nil {
+			data.Owner.FakeId = hdl.hasher.Encode(data.Owner.Id, common.DBTypeUser)
+		}
 		ctx.JSON(http.StatusOK, common.Response(data))
 	}
 }
@@ -97,6 +107,10 @@ func (hdl *placeHandler) UpdatePlace() gin.HandlerFunc {
 		}
 		if err := hdl.placeUseCase.UpdatePlace(ctx.Request.Context(), requester, id, &place); err != nil {
 			panic(err)
+		}
+		place.FakeId = hdl.hasher.Encode(place.Id, common.DBTypePlace)
+		if place.Owner != nil {
+			place.Owner.FakeId = hdl.hasher.Encode(place.Owner.Id, common.DBTypeUser)
 		}
 		ctx.JSON(http.StatusOK, common.Response(place))
 	}

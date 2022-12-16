@@ -10,7 +10,7 @@ import (
 type PlaceRepository interface {
 	Create(context.Context, *placemodel.Place) error
 	ListDataWithCondition(context.Context, *common.Paging, *placemodel.Filter, ...string) ([]placemodel.Place, error)
-	FindDataWithCondition(context.Context, map[string]any) (*placemodel.Place, error)
+	FindDataWithCondition(context.Context, map[string]any, ...string) (*placemodel.Place, error)
 	Update(context.Context, map[string]any, *placemodel.Place) error
 	Delete(context.Context, map[string]any) error
 }
@@ -48,7 +48,7 @@ func (uc *placeUseCase) GetPlaces(ctx context.Context, paging *common.Paging, fi
 func (uc *placeUseCase) GetPlaceById(ctx context.Context, id int) (*placemodel.Place, error) {
 
 	// business logic
-	data, err := uc.placeRepo.FindDataWithCondition(ctx, map[string]any{"id": id})
+	data, err := uc.placeRepo.FindDataWithCondition(ctx, map[string]any{"id": id}, "Owner")
 
 	if err != nil {
 		return nil, common.ErrEntityNotFound(placemodel.EntityName, err)

@@ -16,7 +16,7 @@ func NewUserRepository(db *gorm.DB) *userRepository {
 	return &userRepository{db: db}
 }
 
-func (r *userRepository) Create(ctx context.Context, data *usermodel.UserCreate) error {
+func (r *userRepository) Create(ctx context.Context, data *usermodel.UserRegister) error {
 	db := r.db.Begin()
 
 	if err := db.Table(usermodel.User{}.TableName()).Create(data).Error; err != nil {

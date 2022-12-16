@@ -9,7 +9,7 @@ import (
 )
 
 type UserRepository interface {
-	Create(context.Context, *usermodel.UserCreate) error
+	Create(context.Context, *usermodel.UserRegister) error
 	FindDataWithCondition(context.Context, map[string]any) (*usermodel.User, error)
 }
 
@@ -22,7 +22,7 @@ func NewUserUseCase(cfg *config.Config, userRepo UserRepository) *userUseCase {
 	return &userUseCase{userRepo, cfg}
 }
 
-func (u *userUseCase) Register(ctx context.Context, data *usermodel.UserCreate) error {
+func (u *userUseCase) Register(ctx context.Context, data *usermodel.UserRegister) error {
 	// Check email have been existed ?
 	user, _ := u.userRepository.FindDataWithCondition(ctx, map[string]any{"email": data.Email})
 	if user != nil {

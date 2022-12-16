@@ -13,6 +13,7 @@ type Place struct {
 	CityId        int                `json:"cityId" gorm:"column:city_id"`
 	Name          string             `json:"name" gorm:"column:name"`
 	Address       string             `json:"address" gorm:"column:address"`
+	Cover         *common.Images     `json:"cover" gorm:"column:cover"`
 	Lat           float64            `json:"lat" gorm:"column:lat"`
 	Lng           float64            `json:"lng" gorm:"column:lng"`
 	PricePerNight float64            `json:"pricePerNight" gorm:"column:price_per_night"`

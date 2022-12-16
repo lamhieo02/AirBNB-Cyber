@@ -9,7 +9,7 @@ import (
 )
 
 type userUseCase interface {
-	Register(context.Context, *usermodel.UserCreate) error
+	Register(context.Context, *usermodel.UserRegister) error
 	Login(context.Context, *usermodel.UserLogin) (*utils.Token, error)
 }
 
@@ -23,7 +23,7 @@ func NewUserHandler(userUseCase userUseCase) *userHandler {
 
 func (hdl *userHandler) Register() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var data usermodel.UserCreate
+		var data usermodel.UserRegister
 
 		if err := c.ShouldBind(&data); err != nil {
 			//c.JSON(http.StatusBadRequest, gin.H{"error": err})

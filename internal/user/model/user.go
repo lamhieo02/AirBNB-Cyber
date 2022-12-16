@@ -18,12 +18,13 @@ const Name = "user"
 
 type User struct {
 	common.SqlModel
-	Email     string `json:"email" gorm:"column:email"`
-	Password  string `json:"-" gorm:"column:password"`
-	FirstName string `json:"firstName" gorm:"column:first_name"`
-	LastName  string `json:"lastName" gorm:"column:last_name"`
-	Phone     string `json:"phone" gorm:"column:phone"`
-	Role      string `json:"role" gorm:"column:role"`
+	Email     string        `json:"email" gorm:"column:email"`
+	Password  string        `json:"-" gorm:"column:password"`
+	FirstName string        `json:"firstName" gorm:"column:first_name"`
+	LastName  string        `json:"lastName" gorm:"column:last_name"`
+	Phone     string        `json:"phone" gorm:"column:phone"`
+	Role      string        `json:"role" gorm:"column:role"`
+	Avatar    *common.Image `json:"avatar" gorm:"column:avatar"`
 }
 
 func (User) TableName() string {
@@ -44,14 +45,15 @@ type UserLogin struct {
 	Email    string `json:"email" gorm:"column:email"`
 	Password string `json:"password" gorm:"column:password"`
 }
-type UserCreate struct {
+type UserRegister struct {
 	common.SqlModel
-	Email    string `json:"email" gorm:"column:email"`
-	Password string `json:"password" gorm:"column:password"`
-	Role     string `json:"-" gorm:"column:role"`
+	Email    string        `json:"email" gorm:"column:email"`
+	Password string        `json:"password" gorm:"column:password"`
+	Role     string        `json:"-" gorm:"column:role"`
+	Avatar   *common.Image `json:"avatar" gorm:"column:avatar"`
 }
 
-func (u *UserCreate) PrepareCreate() error {
+func (u *UserRegister) PrepareCreate() error {
 	hashedPassword, err := utils.HashPassword(u.Password)
 	if err != nil {
 		return err
@@ -63,7 +65,7 @@ func (u *UserCreate) PrepareCreate() error {
 	return nil
 }
 
-func (u *UserCreate) Validate() error {
+func (u *UserRegister) Validate() error {
 	// business login
 
 	return nil

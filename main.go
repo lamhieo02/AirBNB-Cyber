@@ -9,6 +9,7 @@ import (
 	placehttp "go01-airbnb/internal/place/delivery/http"
 	placerepository "go01-airbnb/internal/place/repository"
 	placeusecase "go01-airbnb/internal/place/usecase"
+	uploadhttp "go01-airbnb/internal/upload/delivery/http"
 	userhttp "go01-airbnb/internal/user/delivery/http"
 	userrepository "go01-airbnb/internal/user/repository"
 	userusecase "go01-airbnb/internal/user/usecase"
@@ -49,12 +50,18 @@ func main() {
 	userUC := userusecase.NewUserUseCase(cfg, userRepo)
 	userHdl := userhttp.NewUserHandler(userUC)
 
+	uploadHdl := uploadhttp.NewUploadHandler()
+
 	middlewares := middleware.NewMiddlewareManager(cfg, userRepo)
 	router := gin.Default()
 
+	// Global middleware, nghĩa là tất cả các routers đều phải đi qua middleware này
 	router.Use(middlewares.Recover())
+	router.Static("/static", "./static")
 
 	v1 := router.Group("/api/v1")
+
+	v1.POST("upload", uploadHdl.Upload())
 
 	v1.POST("/places", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), placeHdl.CreatePlace())
 	v1.GET("/places", placeHdl.GetPlaces())

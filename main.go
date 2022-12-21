@@ -14,6 +14,7 @@ import (
 	userrepository "go01-airbnb/internal/user/repository"
 	userusecase "go01-airbnb/internal/user/usecase"
 	"go01-airbnb/pkg/db/mysql"
+	"go01-airbnb/pkg/upload"
 	"go01-airbnb/pkg/utils"
 	"log"
 )
@@ -31,12 +32,16 @@ func main() {
 		log.Fatalln("Get config error", err)
 		return
 	}
-
+	// Declare DB
 	db, err := mysql.NewMySQL(cfg)
 
 	if err != nil {
 		log.Fatalln("Can not connect Mysql: ", err)
 	}
+
+	// Declare S3 AWS
+	s3Provider := upload.NewS3Provider(cfg)
+
 	// Declare hashids
 	hasher := utils.NewHashIds(cfg.App.Secret, 10)
 	//db.AutoMigrate(placemodel.Place{})
@@ -50,7 +55,7 @@ func main() {
 	userUC := userusecase.NewUserUseCase(cfg, userRepo)
 	userHdl := userhttp.NewUserHandler(userUC)
 
-	uploadHdl := uploadhttp.NewUploadHandler()
+	uploadHdl := uploadhttp.NewUploadHandler(s3Provider)
 
 	middlewares := middleware.NewMiddlewareManager(cfg, userRepo)
 	router := gin.Default()

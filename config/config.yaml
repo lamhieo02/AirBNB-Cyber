@@ -9,4 +9,10 @@ mysql:
   User: root
   Password: 109339Lam@
   DBName: go01-airbnb
-  
+
+aws:
+  Region: ap-southeast-1
+  APIKey: fake
+  SecretKey: fake
+  S3Domain: abc
+  S3Bucket: fake

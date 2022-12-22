@@ -12,6 +12,7 @@ import (
 	userrepository "go01-airbnb/internal/user/repository"
 	userusecase "go01-airbnb/internal/user/usecase"
 	"go01-airbnb/pkg/db/mysql"
+	"go01-airbnb/pkg/logger"
 	"go01-airbnb/pkg/upload"
 	"go01-airbnb/pkg/utils"
 	"log"
@@ -40,12 +41,15 @@ func main() {
 	// Declare S3 AWS
 	s3Provider := upload.NewS3Provider(cfg)
 
+	// Declare logger
+	sugarLogger := logger.NewZapLogger()
+
 	// Declare hashids
 	hasher := utils.NewHashIds(cfg.App.Secret, 10)
 	//db.AutoMigrate(placemodel.Place{})
 
 	// declare dependencies
-	placeRepo := placerepository.NewPlaceRepository(db)
+	placeRepo := placerepository.NewPlaceRepository(db, sugarLogger)
 	placeUC := placeusecase.NewPlaceUseCase(placeRepo)
 	placeHdl := placehttp.NewPlaceHandler(placeUC, hasher)
 

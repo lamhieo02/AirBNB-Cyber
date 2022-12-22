@@ -1,18 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/speps/go-hashids/v2"
 	"go01-airbnb/config"
 	"go01-airbnb/internal/middleware"
 	placehttp "go01-airbnb/internal/place/delivery/http"
 	placerepository "go01-airbnb/internal/place/repository"
 	placeusecase "go01-airbnb/internal/place/usecase"
+	uploadhttp "go01-airbnb/internal/upload/delivery/http"
 	userhttp "go01-airbnb/internal/user/delivery/http"
 	userrepository "go01-airbnb/internal/user/repository"
 	userusecase "go01-airbnb/internal/user/usecase"
 	"go01-airbnb/pkg/db/mysql"
+	"go01-airbnb/pkg/upload"
 	"go01-airbnb/pkg/utils"
 	"log"
 )
@@ -30,12 +30,16 @@ func main() {
 		log.Fatalln("Get config error", err)
 		return
 	}
-
+	// Declare DB
 	db, err := mysql.NewMySQL(cfg)
 
 	if err != nil {
 		log.Fatalln("Can not connect Mysql: ", err)
 	}
+
+	// Declare S3 AWS
+	s3Provider := upload.NewS3Provider(cfg)
+
 	// Declare hashids
 	hasher := utils.NewHashIds(cfg.App.Secret, 10)
 	//db.AutoMigrate(placemodel.Place{})
@@ -49,12 +53,18 @@ func main() {
 	userUC := userusecase.NewUserUseCase(cfg, userRepo)
 	userHdl := userhttp.NewUserHandler(userUC)
 
+	uploadHdl := uploadhttp.NewUploadHandler(s3Provider)
+
 	middlewares := middleware.NewMiddlewareManager(cfg, userRepo)
 	router := gin.Default()
 
+	// Global middleware, nghĩa là tất cả các routers đều phải đi qua middleware này
 	router.Use(middlewares.Recover())
+	router.Static("/static", "./static")
 
 	v1 := router.Group("/api/v1")
+
+	v1.POST("upload", uploadHdl.Upload())
 
 	v1.POST("/places", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), placeHdl.CreatePlace())
 	v1.GET("/places", placeHdl.GetPlaces())
@@ -69,13 +79,14 @@ func main() {
 	v1.POST("/login", userHdl.Login())
 	//router.Run()
 	router.Run(":" + cfg.App.Port)
+	//hd := hashids.NewData()
+	//hd.Salt = "this is my salt"
+	//hd.MinLength = 30
+	//h, _ := hashids.NewWithData(hd)
+	//e, _ := h.Encode([]int{45, 434, 1313, 99})
+	//fmt.Println(e)
+	//d, _ := h.DecodeWithError(e)
+	//fmt.Println(d)
+	//
 
-	hd := hashids.NewData()
-	hd.Salt = "this is my salt"
-	hd.MinLength = 30
-	h, _ := hashids.NewWithData(hd)
-	e, _ := h.Encode([]int{45, 434, 1313, 99})
-	fmt.Println(e)
-	d, _ := h.DecodeWithError(e)
-	fmt.Println(d)
 }

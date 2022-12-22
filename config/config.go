@@ -9,6 +9,7 @@ import (
 type Config struct {
 	App   AppConfig
 	Mysql MysqlConfig
+	AWS   AWSConfig
 }
 
 type AppConfig struct {
@@ -23,6 +24,13 @@ type MysqlConfig struct {
 	User     string
 	Password string
 	DBName   string
+}
+type AWSConfig struct {
+	Region    string
+	APIKey    string
+	SecretKey string
+	S3Bucket  string
+	S3Domain  string
 }
 
 func LoadConfig() (*Config, error) {

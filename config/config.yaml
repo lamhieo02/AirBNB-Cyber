@@ -9,4 +9,10 @@ mysql:
   User: root
   Password: 109339Lam@
   DBName: go01-airbnb
-  
+
+aws:
+  Region: ap-southeast-1
+  APIKey: AKIAXFND7G2RDKLZP6WM
+  SecretKey: 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
+  S3Domain: d24vk7oviyillz.cloudfront.net
+  S3Bucket: lamhieogo

@@ -12,7 +12,7 @@ mysql:
 
 aws:
   Region: ap-southeast-1
-  APIKey: fake
-  SecretKey: fake
-  S3Domain: abc
-  S3Bucket: fake
+  APIKey: AKIAXFND7G2RDKLZP6WM
+  SecretKey: eK3X0fn5qLMF7s6xJyhevtWVmxwNfAHFfflX9J5Y
+  S3Domain: d24vk7oviyillz.cloudfront.net
+  S3Bucket: lamhieogo

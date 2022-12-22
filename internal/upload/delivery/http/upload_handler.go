@@ -34,25 +34,27 @@ func (hdl *uploadHandler) Upload() gin.HandlerFunc {
 		//}))
 
 		folder := context.DefaultPostForm("folder", "img")
-		fileName := fileHeader.Filename
+		fileName := fileHeader.Filename // image.png
+		//fileExt := filepath.Ext(fileName) // png
 
 		file, err := fileHeader.Open()
+		defer file.Close()
 		if err != nil {
 			panic(common.ErrBadRequest(err))
 		}
-		defer file.Close()
 
 		dataBytes := make([]byte, fileHeader.Size)
 		if _, err := file.Read(dataBytes); err != nil {
 			panic(common.ErrBadRequest(err))
 		}
 
-		// Get width and height of image
-		fileBytes := bytes.NewBuffer(dataBytes)
-		w, h, err := getImageDimension(fileBytes)
-		if err != nil {
-			panic(common.ErrBadRequest(err))
-		}
+		//// Get width and height of image
+		//fileBytes := bytes.NewBuffer(dataBytes)
+		//
+		//w, h, err := getImageDimension(fileBytes)
+		//if err != nil {
+		//	panic(common.ErrBadRequest(err))
+		//}
 
 		img, err := hdl.s3Provider.UploadFile(context.Request.Context(),
 			dataBytes,
@@ -60,8 +62,8 @@ func (hdl *uploadHandler) Upload() gin.HandlerFunc {
 		if err != nil {
 			panic(common.ErrBadRequest(err))
 		}
-		img.Width = w
-		img.Height = h
+		//img.Width = w
+		//img.Height = h
 
 		context.JSON(http.StatusOK, common.Response(img))
 	}

@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/speps/go-hashids/v2"
 	"go01-airbnb/config"
 	"go01-airbnb/internal/middleware"
 	placehttp "go01-airbnb/internal/place/delivery/http"
@@ -81,13 +79,14 @@ func main() {
 	v1.POST("/login", userHdl.Login())
 	//router.Run()
 	router.Run(":" + cfg.App.Port)
+	//hd := hashids.NewData()
+	//hd.Salt = "this is my salt"
+	//hd.MinLength = 30
+	//h, _ := hashids.NewWithData(hd)
+	//e, _ := h.Encode([]int{45, 434, 1313, 99})
+	//fmt.Println(e)
+	//d, _ := h.DecodeWithError(e)
+	//fmt.Println(d)
+	//
 
-	hd := hashids.NewData()
-	hd.Salt = "this is my salt"
-	hd.MinLength = 30
-	h, _ := hashids.NewWithData(hd)
-	e, _ := h.Encode([]int{45, 434, 1313, 99})
-	fmt.Println(e)
-	d, _ := h.DecodeWithError(e)
-	fmt.Println(d)
 }

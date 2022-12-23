@@ -21,7 +21,7 @@ func NewPlaceRepository(db *gorm.DB, logger *zap.SugaredLogger) *placeRepository
 // Create place
 func (r *placeRepository) Create(ctx context.Context, place *placemodel.Place) error {
 	db := r.db.Begin()
-	if err := db.Table("lamheo").Create(place).Error; err != nil {
+	if err := db.Table(place.TableName()).Create(place).Error; err != nil {
 		db.Rollback()
 		r.logger.Desugar().Error("Error when create place", zap.Any("Place", place), zap.Error(err))
 		return common.ErrorDB(err)

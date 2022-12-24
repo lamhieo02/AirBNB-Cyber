@@ -5,10 +5,10 @@ app:
   Secret: 109339Lam
 mysql:
   Host: 127.0.0.1
-  Port: 3306
+  Port: 3307
   User: root
   Password: 109339Lam@
-  DBName: go01-airbnb
+  DBName: go-airbnb
 
 aws:
   Region: ap-southeast-1

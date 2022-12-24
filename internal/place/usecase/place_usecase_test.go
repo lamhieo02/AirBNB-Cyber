@@ -39,22 +39,27 @@ func (m mockPlaceRepository) FindDataWithCondition(ctx context.Context, conditio
 
 func TestPlaceUseCase_CreatePlace(t *testing.T) {
 	placeUC := NewPlaceUseCase(mockPlaceRepository{})
-
 	data := []struct {
 		Input    placemodel.Place
-		Expected string
+		Expected error
 	}{
-		{Input: placemodel.Place{Name: "", Address: "An Nhon"}, Expected: placemodel.ErrNameIsEmpty.Error()},
-		{Input: placemodel.Place{Name: "lamheo", Address: ""}, Expected: placemodel.ErrAddressIsEmpty.Error()},
-		{Input: placemodel.Place{Name: "Phuong", Address: "An Nhon"}, Expected: "something went wrong in db"},
-		{Input: placemodel.Place{Name: "Phuong", Address: "An Nhon"}, Expected: "something went wrong in db"},
+		{Input: placemodel.Place{Name: "", Address: "An Nhon"}, Expected: placemodel.ErrNameIsEmpty},
+		{Input: placemodel.Place{Name: "lamheo", Address: ""}, Expected: placemodel.ErrAddressIsEmpty},
+		{Input: placemodel.Place{Name: "Phuong", Address: "An Nhon"}, Expected: errors.New("something went wrong in db")},
+		{Input: placemodel.Place{Name: "Gia Phuong", Address: "An Nhon"}, Expected: nil},
 	}
 
 	for _, item := range data {
 		err := placeUC.CreatePlace(context.Background(), &item.Input)
-		if err == nil || err.Error() != item.Expected {
-			t.Errorf("create place: Input %v, Expected: %v, Output: %v", &item.Input, item.Expected, err)
+		if err != nil && err.Error() != item.Expected.Error() {
+			t.Errorf("create plac - Input: %v, Expected: %v, Output: %v", &item.Input, item.Expected, err)
 		}
+	}
+	// Test trường hợp thành công
+	dataTest := placemodel.Place{Name: "Gia Phuong", Address: "An Nhon"}
+	err := placeUC.CreatePlace(context.Background(), &dataTest)
+	if err != nil {
+		t.Errorf("create plac - Input: %v, Expected: %v, Output: %v", &dataTest, nil, err)
 	}
 
 }

@@ -1,3 +1,4 @@
+# Docker file quy định nội dung của 1 docker image - dựa theo Dockerfile, Docker biết cần làm những gì để create 1 docker image
 #Build image base on base image
 FROM golang:1.19-alpine as builder
 #Run: dùng để thực thi một câu lệnh trong images

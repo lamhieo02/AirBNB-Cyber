@@ -4,7 +4,7 @@ app:
   Mode: development
   Secret: 109339Lam
 mysql:
-  Host: 127.0.0.1
+  Host: localhost
   Port: 3307
   User: root
   Password: 109339Lam@

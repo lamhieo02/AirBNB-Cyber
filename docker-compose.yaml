@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  go-mysql:
+    image: mysql
+    container_name: go01_mysql
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=109339Lam@
+      - MYSQL_DATABASE=go-airbnb
+    volumes:
+      - database_mysql:/var/lib/mysql
+    networks:
+      - go01-airbnb
+
+  api:
+    depends_on:
+      - go-mysql
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: go01-api-airbnb
+    ports:
+      - "8080:8080"
+    networks:
+      - go01-airbnb
+
+volumes:
+  database_mysql:
+
+networks:
+  go01-airbnb:
+    driver: bridge

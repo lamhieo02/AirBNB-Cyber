@@ -1,3 +1,4 @@
+
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
                          `id` int NOT NULL AUTO_INCREMENT,

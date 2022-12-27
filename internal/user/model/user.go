@@ -47,10 +47,12 @@ type UserLogin struct {
 }
 type UserRegister struct {
 	common.SqlModel
-	Email    string        `json:"email" gorm:"column:email"`
-	Password string        `json:"password" gorm:"column:password"`
-	Role     string        `json:"-" gorm:"column:role"`
-	Avatar   *common.Image `json:"avatar" gorm:"column:avatar"`
+	Email     string        `json:"email" gorm:"column:email"`
+	Password  string        `json:"password" gorm:"column:password"`
+	FirstName string        `json:"firstName" gorm:"column:first_name"`
+	LastName  string        `json:"lastName" gorm:"column:last_name"`
+	Role      string        `json:"-" gorm:"column:role"`
+	Avatar    *common.Image `json:"avatar" gorm:"column:avatar"`
 }
 
 func (u *UserRegister) PrepareCreate() error {

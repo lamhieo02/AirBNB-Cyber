@@ -2,25 +2,28 @@ package repository
 
 import (
 	"context"
+	"go.uber.org/zap"
 	placemodel "go01-airbnb/internal/place/model"
 	"go01-airbnb/pkg/common"
 	"gorm.io/gorm"
 )
 
 type placeRepository struct {
-	db *gorm.DB
+	db     *gorm.DB
+	logger *zap.SugaredLogger
 }
 
 // Constructor
-func NewPlaceRepository(db *gorm.DB) *placeRepository {
-	return &placeRepository{db}
+func NewPlaceRepository(db *gorm.DB, logger *zap.SugaredLogger) *placeRepository {
+	return &placeRepository{db, logger}
 }
 
 // Create place
 func (r *placeRepository) Create(ctx context.Context, place *placemodel.Place) error {
 	db := r.db.Begin()
-	if err := db.Table(placemodel.Place{}.TableName()).Create(place).Error; err != nil {
+	if err := db.Table(place.TableName()).Create(place).Error; err != nil {
 		db.Rollback()
+		r.logger.Desugar().Error("Error when create place", zap.Any("Place", place), zap.Error(err))
 		return common.ErrorDB(err)
 	}
 	if err := db.Commit().Error; err != nil {

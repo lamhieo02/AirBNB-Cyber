@@ -10,7 +10,6 @@ import (
 func (m *middlewareManager) RequiredRoles(roles ...string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		user := ctx.MustGet("User").(*usermodel.User)
-
 		for i := range roles {
 			if user.Role == roles[i] {
 				ctx.Next()

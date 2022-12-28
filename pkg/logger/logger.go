@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+type Logger *zap.SugaredLogger
+
 //func NewZapLogger() *zap.SugaredLogger {
 //	cfg := zap.Config{
 //		Level:       zap.NewAtomicLevelAt(zap.InfoLevel),

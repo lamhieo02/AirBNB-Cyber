@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"go01-airbnb/cache"
 	"go01-airbnb/config"
 	"go01-airbnb/internal/middleware"
 	placehttp "go01-airbnb/internal/place/delivery/http"
@@ -12,6 +13,7 @@ import (
 	userrepository "go01-airbnb/internal/user/repository"
 	userusecase "go01-airbnb/internal/user/usecase"
 	"go01-airbnb/pkg/db/mysql"
+	dbredis "go01-airbnb/pkg/db/redis"
 	"go01-airbnb/pkg/logger"
 	"go01-airbnb/pkg/upload"
 	"go01-airbnb/pkg/utils"
@@ -33,9 +35,14 @@ func main() {
 	}
 	// Declare DB
 	db, err := mysql.NewMySQL(cfg)
-
 	if err != nil {
-		log.Fatalln("Can not connect Mysql: ", err)
+		log.Fatalln("Can not connect mysql: ", err)
+	}
+	db = db.Debug()
+	// Declare redis
+	redis, err := dbredis.NewRedisClient(cfg)
+	if err != nil {
+		log.Fatalln("Can not connect redis: ", err)
 	}
 
 	// Declare S3 AWS
@@ -54,12 +61,13 @@ func main() {
 	placeHdl := placehttp.NewPlaceHandler(placeUC, hasher)
 
 	userRepo := userrepository.NewUserRepository(db)
+	userCache := cache.NewAuthUserCache(userRepo, cache.NewRedisCache(redis))
 	userUC := userusecase.NewUserUseCase(cfg, userRepo)
 	userHdl := userhttp.NewUserHandler(userUC)
 
 	uploadHdl := uploadhttp.NewUploadHandler(s3Provider)
 
-	middlewares := middleware.NewMiddlewareManager(cfg, userRepo)
+	middlewares := middleware.NewMiddlewareManager(cfg, userCache)
 	router := gin.Default()
 
 	// Global middleware, nghĩa là tất cả các routers đều phải đi qua middleware này

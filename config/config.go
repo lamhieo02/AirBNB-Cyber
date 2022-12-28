@@ -10,6 +10,7 @@ type Config struct {
 	App   AppConfig
 	Mysql MysqlConfig
 	AWS   AWSConfig
+	Redis RedisConfig
 }
 
 type AppConfig struct {
@@ -31,6 +32,12 @@ type AWSConfig struct {
 	SecretKey string
 	S3Bucket  string
 	S3Domain  string
+}
+type RedisConfig struct {
+	Host     string
+	Port     string
+	Password string
+	DB       int
 }
 
 func LoadConfig() (*Config, error) {

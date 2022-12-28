@@ -16,3 +16,9 @@ aws:
   SecretKey: eK3X0fn5qLMF7s6xJyhevtWVmxwNfAHFfflX9J5Y
   S3Domain: d24vk7oviyillz.cloudfront.net
   S3Bucket: lamhieogo
+
+redis:
+  Host: localhost
+  Port: 6379
+  Password: ""
+  DB: 0

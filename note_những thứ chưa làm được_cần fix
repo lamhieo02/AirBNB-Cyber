@@ -1,0 +1,2 @@
+Khi chạy docker compose up thì sẽ có thể có lỗi - không kết nối được mysql, vì container của app run trươớc khi container của mysql run
+    => Sử dụng wait - for để solve this problem: https://docs.docker.com/compose/startup-order/

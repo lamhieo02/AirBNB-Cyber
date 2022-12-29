@@ -17,9 +17,11 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o go-airbnb .
 #stage runner
 FROM alpine
 WORKDIR /app/
-
+# copy file thực thi go từ stage trước đó
 COPY --from=builder /app/go-airbnb .
-COPY ./config/config.yaml ./config/
-
+#copy config
+COPY config/config.yaml ./config/
+#copy migrations
+COPY migrations migrations
 #CMD ["make migrate_up"]
 CMD ["/app/go-airbnb"]

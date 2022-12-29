@@ -14,17 +14,19 @@ type Config struct {
 }
 
 type AppConfig struct {
-	Version string
-	Port    string
-	Mode    string
-	Secret  string
+	Version      string
+	Port         string
+	Mode         string
+	Secret       string
+	MigrationURL string
 }
 type MysqlConfig struct {
-	Host     string
-	Port     string
-	User     string
-	Password string
-	DBName   string
+	Host          string
+	ContainerName string
+	Port          string
+	User          string
+	Password      string
+	DBName        string
 }
 type AWSConfig struct {
 	Region    string

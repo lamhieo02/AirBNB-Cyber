@@ -39,6 +39,8 @@ func main() {
 		log.Fatalln("Can not connect mysql: ", err)
 	}
 	db = db.Debug()
+
+	utils.RunDBMigration(cfg)
 	// Declare redis
 	redis, err := dbredis.NewRedisClient(cfg)
 	if err != nil {
@@ -91,14 +93,4 @@ func main() {
 	v1.POST("/login", userHdl.Login())
 	//router.Run()
 	router.Run(":" + cfg.App.Port)
-	//hd := hashids.NewData()
-	//hd.Salt = "this is my salt"
-	//hd.MinLength = 30
-	//h, _ := hashids.NewWithData(hd)
-	//e, _ := h.Encode([]int{45, 434, 1313, 99})
-	//fmt.Println(e)
-	//d, _ := h.DecodeWithError(e)
-	//fmt.Println(d)
-	//
-
 }

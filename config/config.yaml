@@ -6,7 +6,8 @@ app:
   MigrationURL:  file://migrations
 
 mysql:
-  Host: go-mysql
+  #Host: go-mysql
+  Host: localhost
   ContainerName: go01_mysql
   Port: 3306
   User: root
@@ -21,7 +22,8 @@ aws:
   S3Bucket: lamhieogo
 
 redis:
-  Host: redis
+  #Host: redis
+  Host: localhost
   Port: 6379
   Password: ""
   DB: 0

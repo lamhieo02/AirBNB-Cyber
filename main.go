@@ -8,6 +8,9 @@ import (
 	placehttp "go01-airbnb/internal/place/delivery/http"
 	placerepository "go01-airbnb/internal/place/repository"
 	placeusecase "go01-airbnb/internal/place/usecase"
+	placelikehttp "go01-airbnb/internal/placelike/delivery/http"
+	placelikerepository "go01-airbnb/internal/placelike/repository"
+	placelikeusecase "go01-airbnb/internal/placelike/usecase"
 	uploadhttp "go01-airbnb/internal/upload/delivery/http"
 	userhttp "go01-airbnb/internal/user/delivery/http"
 	userrepository "go01-airbnb/internal/user/repository"
@@ -69,6 +72,10 @@ func main() {
 
 	uploadHdl := uploadhttp.NewUploadHandler(s3Provider)
 
+	placeLikeRepo := placelikerepository.NewPlaceLikeRepository(db, sugarLogger)
+	placeLikeUC := placelikeusecase.NewUserLikePlaceUseCase(placeLikeRepo)
+	placeLikeHdl := placelikehttp.NewUserLikePlaceUseCase(placeLikeUC, hasher)
+
 	middlewares := middleware.NewMiddlewareManager(cfg, userCache)
 	router := gin.Default()
 
@@ -91,6 +98,10 @@ func main() {
 	v1.GET("/admin", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), userHdl.Profiles())
 	v1.POST("/register", userHdl.Register())
 	v1.POST("/login", userHdl.Login())
+
+	// Place Like
+	v1.POST("/:id/like", middlewares.RequiredAuth(), placeLikeHdl.UserLikePlace())
+	v1.DELETE("/:id/unlike", middlewares.RequiredAuth(), placeLikeHdl.UserUnLikePlace())
 	//router.Run()
 	router.Run(":" + cfg.App.Port)
 }

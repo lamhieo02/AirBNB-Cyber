@@ -102,6 +102,7 @@ func main() {
 	// Place Like
 	v1.POST("/:id/like", middlewares.RequiredAuth(), placeLikeHdl.UserLikePlace())
 	v1.DELETE("/:id/unlike", middlewares.RequiredAuth(), placeLikeHdl.UserUnLikePlace())
+	v1.GET("/like", middlewares.RequiredAuth(), placeLikeHdl.GetPlacesLikedByUser())
 	//router.Run()
 	router.Run(":" + cfg.App.Port)
 }

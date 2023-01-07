@@ -2,12 +2,15 @@ package placelikeusecase
 
 import (
 	"context"
+	placemodel "go01-airbnb/internal/place/model"
 	placelikemodel "go01-airbnb/internal/placelike/model"
+	"go01-airbnb/pkg/common"
 )
 
 type UserPlaceRepo interface {
 	Create(context.Context, *placelikemodel.Like) error
 	Delete(context.Context, int, int) error
+	GetPlacesLikedByUser(context.Context, int, ...string) ([]common.SimplePlace, error)
 }
 
 type userPlaceUseCase struct {
@@ -32,4 +35,12 @@ func (uc *userPlaceUseCase) UnLikePlace(ctx context.Context, userId int, placeId
 	}
 
 	return nil
+}
+
+func (uc *userPlaceUseCase) PlacesLikedByUser(ctx context.Context, userId int) ([]common.SimplePlace, error) {
+	listPlace, err := uc.userPlaceRepo.GetPlacesLikedByUser(ctx, userId, "Place")
+	if err != nil {
+		return nil, common.ErrCannotListEntity(placemodel.EntityName, err)
+	}
+	return listPlace, nil
 }

@@ -5,7 +5,7 @@ Khi chạy docker compose up thì sẽ có thể có lỗi - không kết nối 
 + API Authentication
 + API User
 + API Place
-    + API PlaceLike
+    + API PlaceLike: User like place, User unlike place, List places liked by user
     + API Review
 + API Location
 + API Booking

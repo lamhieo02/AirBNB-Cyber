@@ -35,3 +35,29 @@ func (r *placeLikeRepository) Delete(ctx context.Context, userId int, placeId in
 	}
 	return nil
 }
+func (r *placeLikeRepository) GetPlacesLikedByUser(ctx context.Context, userId int, keys ...string) ([]common.SimplePlace, error) {
+	var result []placelikemodel.Like
+
+	//db := r.db.Model(&placelikemodel.Like{})
+	db := r.db.Table(placelikemodel.Like{}.TableName()).Where("user_id = ?", userId)
+
+	//Preload more keys
+	for _, k := range keys {
+		db = db.Preload(k)
+	}
+
+	//if err := db.Count(&paging.Total).Error; err != nil {
+	//	return nil, common.ErrorDB(err)
+	//}
+
+	if err := db.Find(&result).Error; err != nil {
+		return nil, common.ErrorDB(err)
+	}
+
+	places := make([]common.SimplePlace, len(result))
+	for i := range result {
+		places[i] = *result[i].Place
+		places[i].CreatedAt = result[i].CreatedAt
+	}
+	return places, nil
+}

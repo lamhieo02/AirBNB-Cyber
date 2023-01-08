@@ -1,4 +1,4 @@
-package userplacerepository
+package placelikerepository
 
 import (
 	"context"

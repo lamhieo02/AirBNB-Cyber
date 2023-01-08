@@ -40,7 +40,7 @@ func (hdl *placeHandler) CreatePlace() gin.HandlerFunc {
 			panic(err)
 		}
 		// encode id before send data to user
-		place.FakeId = hdl.hasher.Encode(place.Id, 1)
+		place.FakeId = hdl.hasher.Encode(place.Id, common.DBTypePlace)
 		ctx.JSON(http.StatusOK, common.Response(place))
 	}
 }

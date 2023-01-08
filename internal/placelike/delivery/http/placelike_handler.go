@@ -1,4 +1,4 @@
-package userplacehttp
+package placelikehttp
 
 import (
 	"context"
@@ -9,22 +9,22 @@ import (
 	"net/http"
 )
 
-type UserPlaceUseCase interface {
+type PlaceLikeUseCase interface {
 	LikePlace(context.Context, *placelikemodel.Like) error
 	UnLikePlace(context.Context, int, int) error
 	PlacesLikedByUser(context.Context, int) ([]common.SimplePlace, error)
 }
 
-type userPlaceHandler struct {
-	userLikePlaceUseCase UserPlaceUseCase
-	hasher               *utils.Hasher
+type placeLikeHandler struct {
+	placeLikeUseCase PlaceLikeUseCase
+	hasher           *utils.Hasher
 }
 
-func NewUserLikePlaceUseCase(userLikeResUseCase UserPlaceUseCase, hasher *utils.Hasher) *userPlaceHandler {
-	return &userPlaceHandler{userLikePlaceUseCase: userLikeResUseCase, hasher: hasher}
+func NewUserLikePlaceUseCase(placeLikeUseCase PlaceLikeUseCase, hasher *utils.Hasher) *placeLikeHandler {
+	return &placeLikeHandler{placeLikeUseCase: placeLikeUseCase, hasher: hasher}
 }
 
-func (hdl *userPlaceHandler) UserLikePlace() gin.HandlerFunc {
+func (hdl *placeLikeHandler) UserLikePlace() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id := hdl.hasher.Decode(ctx.Param("id"))
 		requester := ctx.MustGet("User").(common.Requester)
@@ -33,7 +33,7 @@ func (hdl *userPlaceHandler) UserLikePlace() gin.HandlerFunc {
 			PlaceId: id,
 			UserId:  requester.GetUserId(),
 		}
-		if err := hdl.userLikePlaceUseCase.LikePlace(ctx, &data); err != nil {
+		if err := hdl.placeLikeUseCase.LikePlace(ctx, &data); err != nil {
 			panic(err)
 		}
 
@@ -41,11 +41,11 @@ func (hdl *userPlaceHandler) UserLikePlace() gin.HandlerFunc {
 	}
 }
 
-func (hdl *userPlaceHandler) UserUnLikePlace() gin.HandlerFunc {
+func (hdl *placeLikeHandler) UserUnLikePlace() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id := hdl.hasher.Decode(ctx.Param("id"))
 		requester := ctx.MustGet("User").(common.Requester)
-		if err := hdl.userLikePlaceUseCase.UnLikePlace(ctx, requester.GetUserId(), id); err != nil {
+		if err := hdl.placeLikeUseCase.UnLikePlace(ctx, requester.GetUserId(), id); err != nil {
 			panic(err)
 		}
 
@@ -53,11 +53,11 @@ func (hdl *userPlaceHandler) UserUnLikePlace() gin.HandlerFunc {
 	}
 }
 
-func (hdl *userPlaceHandler) GetPlacesLikedByUser() gin.HandlerFunc {
+func (hdl *placeLikeHandler) GetPlacesLikedByUser() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		requester := ctx.MustGet("User").(common.Requester)
 
-		result, err := hdl.userLikePlaceUseCase.PlacesLikedByUser(ctx, requester.GetUserId())
+		result, err := hdl.placeLikeUseCase.PlacesLikedByUser(ctx, requester.GetUserId())
 		if err != nil {
 			panic(err)
 		}

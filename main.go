@@ -4,6 +4,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"go01-airbnb/cache"
 	"go01-airbnb/config"
+	amenityhttp "go01-airbnb/internal/amenity/delivery/http"
+	amenityrepository "go01-airbnb/internal/amenity/repository"
+	amenityusecase "go01-airbnb/internal/amenity/usecase"
 	"go01-airbnb/internal/middleware"
 	placehttp "go01-airbnb/internal/place/delivery/http"
 	placerepository "go01-airbnb/internal/place/repository"
@@ -76,6 +79,10 @@ func main() {
 	placeLikeUC := placelikeusecase.NewUserLikePlaceUseCase(placeLikeRepo)
 	placeLikeHdl := placelikehttp.NewUserLikePlaceUseCase(placeLikeUC, hasher)
 
+	amenityRepo := amenityrepository.NewAmenityRepository(db, sugarLogger)
+	amenityUC := amenityusecase.NewAmenityUseCase(amenityRepo)
+	amenityHdl := amenityhttp.NewAmenityHandler(amenityUC, hasher)
+
 	middlewares := middleware.NewMiddlewareManager(cfg, userCache)
 	router := gin.Default()
 
@@ -103,6 +110,13 @@ func main() {
 	v1.POST("/:id/like", middlewares.RequiredAuth(), placeLikeHdl.UserLikePlace())
 	v1.DELETE("/:id/unlike", middlewares.RequiredAuth(), placeLikeHdl.UserUnLikePlace())
 	v1.GET("/like", middlewares.RequiredAuth(), placeLikeHdl.GetPlacesLikedByUser())
+
+	// Amenity
+	v1.POST("/amenities", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), amenityHdl.CreateAmenity())
+	v1.GET("/amenities", amenityHdl.GetAmenities())
+	v1.DELETE("/:id/amenities", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), amenityHdl.DeleteAmenity())
+	v1.PUT("/:id/amenities", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), amenityHdl.UpdateAmenity())
+
 	//router.Run()
 	router.Run(":" + cfg.App.Port)
 }

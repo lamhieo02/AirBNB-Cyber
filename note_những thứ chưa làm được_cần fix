@@ -2,11 +2,13 @@ Khi chạy docker compose up thì sẽ có thể có lỗi - không kết nối 
     => Sử dụng wait - for để solve this problem: https://docs.docker.com/compose/startup-order/
 
 
-+ API Authentication
-+ API User
-+ API Place
-    + API PlaceLike: User like place, User unlike place, List places liked by user
-    + API Review
-+ API Location
++ API Authentication => Done
++ API User => Done
++ API Place => Done
++ API PlaceLike: User like place, User unlike place, List places liked by user => Done
++ API Amenities => Done
++ API PlaceAmenities
 + API Booking
++ API Review => Need booking id, so need finish api booking before making api review
++ API Location
 + API Upload

@@ -114,6 +114,7 @@ func main() {
 	// Amenity
 	v1.POST("/amenities", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), amenityHdl.CreateAmenity())
 	v1.GET("/amenities", amenityHdl.GetAmenities())
+	v1.GET("/:id/amenities", amenityHdl.GetAmenityById())
 	v1.DELETE("/:id/amenities", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), amenityHdl.DeleteAmenity())
 	v1.PUT("/:id/amenities", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), amenityHdl.UpdateAmenity())
 

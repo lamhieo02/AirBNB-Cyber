@@ -14,6 +14,7 @@ type AmenityUseCase interface {
 	GetAmenities(context.Context, *common.Paging) ([]amenitymodel.Amenity, error)
 	DeleteAmenity(context.Context, int) error
 	UpdateAmenity(context.Context, int, *amenitymodel.Amenity) error
+	GetAmenityById(context.Context, int) (*amenitymodel.Amenity, error)
 }
 
 type amenityHandler struct {
@@ -85,5 +86,22 @@ func (hdl *amenityHandler) UpdateAmenity() gin.HandlerFunc {
 			panic(err)
 		}
 		ctx.JSON(http.StatusOK, common.Response(true))
+	}
+}
+
+func (hdl *amenityHandler) GetAmenityById() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		id := hdl.hasher.Decode(ctx.Param("id"))
+
+		data, err := hdl.amenityUseCase.GetAmenityById(ctx, id)
+
+		if err != nil {
+			panic(err)
+		}
+
+		data.FakeId = hdl.hasher.Encode(data.Id, common.DBTypeAmenity)
+
+		ctx.JSON(http.StatusOK, common.Response(data))
 	}
 }

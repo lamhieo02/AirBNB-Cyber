@@ -31,6 +31,7 @@ func (uc *AmenityUseCase) CreateAmenity(ctx context.Context, amenity *amenitymod
 	}
 	return nil
 }
+
 func (uc *AmenityUseCase) GetAmenities(ctx context.Context, paging *common.Paging) ([]amenitymodel.Amenity, error) {
 	data, err := uc.amenityRepo.ListAmenities(ctx, paging)
 	if err != nil {
@@ -38,6 +39,15 @@ func (uc *AmenityUseCase) GetAmenities(ctx context.Context, paging *common.Pagin
 	}
 	return data, nil
 }
+
+func (uc *AmenityUseCase) GetAmenityById(ctx context.Context, id int) (*amenitymodel.Amenity, error) {
+	data, err := uc.amenityRepo.FindDataWithCondition(ctx, map[string]any{"id": id})
+	if err != nil {
+		return nil, common.ErrCannotListEntity(amenitymodel.EntityName, err)
+	}
+	return data, nil
+}
+
 func (uc *AmenityUseCase) DeleteAmenity(ctx context.Context, id int) error {
 	_, err := uc.amenityRepo.FindDataWithCondition(ctx, map[string]any{"id": id})
 	if err != nil {

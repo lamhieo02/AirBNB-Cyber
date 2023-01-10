@@ -11,6 +11,9 @@ import (
 	placehttp "go01-airbnb/internal/place/delivery/http"
 	placerepository "go01-airbnb/internal/place/repository"
 	placeusecase "go01-airbnb/internal/place/usecase"
+	placeamenitieshttp "go01-airbnb/internal/placeamenities/delivery/http"
+	placeamenitiesrepository "go01-airbnb/internal/placeamenities/repository"
+	placeamenitiesusecase "go01-airbnb/internal/placeamenities/usecase"
 	placelikehttp "go01-airbnb/internal/placelike/delivery/http"
 	placelikerepository "go01-airbnb/internal/placelike/repository"
 	placelikeusecase "go01-airbnb/internal/placelike/usecase"
@@ -77,12 +80,15 @@ func main() {
 
 	placeLikeRepo := placelikerepository.NewPlaceLikeRepository(db, sugarLogger)
 	placeLikeUC := placelikeusecase.NewUserLikePlaceUseCase(placeLikeRepo)
-	placeLikeHdl := placelikehttp.NewUserLikePlaceUseCase(placeLikeUC, hasher)
+	placeLikeHdl := placelikehttp.NewUserLikePlaceHandler(placeLikeUC, hasher)
 
 	amenityRepo := amenityrepository.NewAmenityRepository(db, sugarLogger)
 	amenityUC := amenityusecase.NewAmenityUseCase(amenityRepo)
 	amenityHdl := amenityhttp.NewAmenityHandler(amenityUC, hasher)
 
+	placeAmenityRepo := placeamenitiesrepository.NewPlaceAmenitiesRepo(db, sugarLogger)
+	placeAmenityUC := placeamenitiesusecase.NewPlaceAmenitiesUseCase(placeAmenityRepo)
+	placeAmenityHdl := placeamenitieshttp.NewPlaceAmenitiesHandler(placeAmenityUC, hasher)
 	middlewares := middleware.NewMiddlewareManager(cfg, userCache)
 	router := gin.Default()
 
@@ -107,16 +113,22 @@ func main() {
 	v1.POST("/login", userHdl.Login())
 
 	// Place Like
-	v1.POST("/:id/like", middlewares.RequiredAuth(), placeLikeHdl.UserLikePlace())
-	v1.DELETE("/:id/unlike", middlewares.RequiredAuth(), placeLikeHdl.UserUnLikePlace())
+	v1.POST("/like/:id", middlewares.RequiredAuth(), placeLikeHdl.UserLikePlace())
+	v1.DELETE("/unlike/:id", middlewares.RequiredAuth(), placeLikeHdl.UserUnLikePlace())
 	v1.GET("/like", middlewares.RequiredAuth(), placeLikeHdl.GetPlacesLikedByUser())
 
 	// Amenity
 	v1.POST("/amenities", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), amenityHdl.CreateAmenity())
 	v1.GET("/amenities", amenityHdl.GetAmenities())
-	v1.GET("/:id/amenities", amenityHdl.GetAmenityById())
-	v1.DELETE("/:id/amenities", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), amenityHdl.DeleteAmenity())
-	v1.PUT("/:id/amenities", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), amenityHdl.UpdateAmenity())
+	v1.GET("/amenities/:id", amenityHdl.GetAmenityById())
+	v1.DELETE("/amenities/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), amenityHdl.DeleteAmenity())
+	v1.PUT("/amenities/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), amenityHdl.UpdateAmenity())
+
+	// PlaceAmenities
+	v1.POST("/place_amenities/:pid/:aid", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), placeAmenityHdl.CreatePlaceAmenities())
+	v1.DELETE("/place_amenities/:pid/:aid", middlewares.RequiredAuth(), placeAmenityHdl.DeletePlaceAmenities())
+	v1.GET("/place_amenities", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), placeAmenityHdl.GetPlaceAmenities())
+	v1.GET("/place_amenities/:place_id", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), placeAmenityHdl.GetAmenitiesByPlaceId())
 
 	//router.Run()
 	router.Run(":" + cfg.App.Port)

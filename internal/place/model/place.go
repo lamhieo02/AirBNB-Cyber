@@ -23,6 +23,9 @@ const EntityName = "place"
 
 func (Place) TableName() string { return "places" }
 
+func (p *Place) GetOwnerId() int {
+	return p.OwnerId
+}
 func (p *Place) Validate() error {
 	p.Name = strings.TrimSpace(p.Name)
 

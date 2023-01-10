@@ -34,7 +34,7 @@ func (hdl *amenityHandler) CreateAmenity() gin.HandlerFunc {
 			panic(common.ErrBadRequest(err))
 		}
 
-		if err := hdl.amenityUseCase.CreateAmenity(ctx, &amenity); err != nil {
+		if err := hdl.amenityUseCase.CreateAmenity(ctx.Request.Context(), &amenity); err != nil {
 			panic(err)
 		}
 		amenity.FakeId = hdl.hasher.Encode(amenity.Id, common.DBTypeAmenity)
@@ -50,7 +50,7 @@ func (hdl *amenityHandler) GetAmenities() gin.HandlerFunc {
 		}
 		paging.Fulfill()
 
-		data, err := hdl.amenityUseCase.GetAmenities(ctx, &paging)
+		data, err := hdl.amenityUseCase.GetAmenities(ctx.Request.Context(), &paging)
 
 		if err != nil {
 			panic(err)
@@ -67,12 +67,13 @@ func (hdl *amenityHandler) DeleteAmenity() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id := hdl.hasher.Decode(ctx.Param("id"))
 
-		if err := hdl.amenityUseCase.DeleteAmenity(ctx, id); err != nil {
+		if err := hdl.amenityUseCase.DeleteAmenity(ctx.Request.Context(), id); err != nil {
 			panic(err)
 		}
 		ctx.JSON(http.StatusOK, common.Response(true))
 	}
 }
+
 func (hdl *amenityHandler) UpdateAmenity() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var amenity *amenitymodel.Amenity
@@ -82,7 +83,7 @@ func (hdl *amenityHandler) UpdateAmenity() gin.HandlerFunc {
 		}
 		id := hdl.hasher.Decode(ctx.Param("id"))
 
-		if err := hdl.amenityUseCase.UpdateAmenity(ctx, id, amenity); err != nil {
+		if err := hdl.amenityUseCase.UpdateAmenity(ctx.Request.Context(), id, amenity); err != nil {
 			panic(err)
 		}
 		ctx.JSON(http.StatusOK, common.Response(true))
@@ -94,7 +95,7 @@ func (hdl *amenityHandler) GetAmenityById() gin.HandlerFunc {
 
 		id := hdl.hasher.Decode(ctx.Param("id"))
 
-		data, err := hdl.amenityUseCase.GetAmenityById(ctx, id)
+		data, err := hdl.amenityUseCase.GetAmenityById(ctx.Request.Context(), id)
 
 		if err != nil {
 			panic(err)

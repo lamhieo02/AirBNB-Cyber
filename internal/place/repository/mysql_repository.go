@@ -89,6 +89,7 @@ func (r *placeRepository) FindDataWithCondition(ctx context.Context,
 	}
 	return &data, nil
 }
+
 func (r *placeRepository) Update(ctx context.Context, condition map[string]any, place *placemodel.Place) error {
 	if err := r.db.Table(placemodel.Place{}.TableName()).Where(condition).Updates(place).Error; err != nil {
 		return common.ErrorDB(err)

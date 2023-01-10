@@ -16,6 +16,7 @@ type placeLikeRepository struct {
 func NewPlaceLikeRepository(db *gorm.DB, logger *zap.SugaredLogger) *placeLikeRepository {
 	return &placeLikeRepository{db, logger}
 }
+
 func (r *placeLikeRepository) Create(ctx context.Context, placeLike *placelikemodel.Like) error {
 	db := r.db.Begin()
 	if err := db.Table(placeLike.TableName()).Create(placeLike).Error; err != nil {
@@ -29,6 +30,7 @@ func (r *placeLikeRepository) Create(ctx context.Context, placeLike *placelikemo
 	}
 	return nil
 }
+
 func (r *placeLikeRepository) Delete(ctx context.Context, userId int, placeId int) error {
 	if err := r.db.Table(placelikemodel.Like{}.TableName()).Where("place_id = ? and user_id = ?", placeId, userId).Delete(nil).Error; err != nil {
 		return common.ErrorDB(err)

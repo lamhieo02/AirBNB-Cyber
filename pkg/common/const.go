@@ -1,10 +1,11 @@
 package common
 
 const (
-	DBTypePlace   = 1
-	DBTypeUser    = 2
-	DBTypeAmenity = 3
-	DBPaging      = 4
+	DBTypePlace          = 1
+	DBTypeUser           = 2
+	DBTypeAmenity        = 3
+	DBPaging             = 4
+	DBTypePlaceAmenities = 5
 )
 
 type Requester interface {

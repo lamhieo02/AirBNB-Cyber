@@ -1,7 +1,6 @@
 package common
 
 import (
-	"context"
 	"time"
 )
 
@@ -17,8 +16,4 @@ type SimplePlace struct {
 
 func (SimplePlace) TableName() string {
 	return "places"
-}
-
-type RequestPlace interface {
-	FindOwnerId(context.Context, map[string]any) (int, error)
 }

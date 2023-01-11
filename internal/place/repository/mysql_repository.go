@@ -2,6 +2,7 @@ package placerepository
 
 import (
 	"context"
+	"errors"
 	"go.uber.org/zap"
 	placemodel "go01-airbnb/internal/place/model"
 	"go01-airbnb/pkg/common"
@@ -99,6 +100,22 @@ func (r *placeRepository) Update(ctx context.Context, condition map[string]any, 
 func (r *placeRepository) Delete(ctx context.Context, condition map[string]any) error {
 	if err := r.db.Table(placemodel.Place{}.TableName()).Where(condition).Delete(&placemodel.Place{}).Error; err != nil {
 		return common.ErrorDB(err)
+	}
+	return nil
+}
+func (r *placeRepository) CheckOwner(placeId int, userId int) error {
+
+	var data placemodel.Place
+	//log.Fatalln(placeId)
+	if err := r.db.Table(placemodel.Place{}.TableName()).Where("id=?", placeId).First(&data).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return gorm.ErrRecordNotFound
+		}
+		return common.ErrorDB(err)
+	}
+
+	if data.OwnerId != userId {
+		return errors.New("userId not match with ownerId")
 	}
 	return nil
 }

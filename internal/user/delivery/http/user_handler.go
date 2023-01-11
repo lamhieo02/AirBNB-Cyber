@@ -11,6 +11,7 @@ import (
 type userUseCase interface {
 	Register(context.Context, *usermodel.UserRegister) error
 	Login(context.Context, *usermodel.UserLogin) (*utils.Token, error)
+	//GetProfileOfCurrentUser
 }
 
 type userHandler struct {

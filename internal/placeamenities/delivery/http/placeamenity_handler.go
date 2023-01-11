@@ -11,12 +11,11 @@ import (
 
 type PlaceAmenitiesUseCase interface {
 	CreatePlaceAmenity(context.Context, *placeamenitiesmodel.PlaceAmenities) error
-	DeletePlaceAmenity(context.Context, int, int) error
+	DeletePlaceAmenity(context.Context, int, int, common.Requester) error
 	GetPlaceAmenities(context.Context, *common.Paging) ([]placeamenitiesmodel.PlaceAmenities, error)
 	GetAmenitiesByPlaceId(context.Context, int) ([]placeamenitiesmodel.PlaceAmenities, error)
 }
 
-// Xoa,
 type placeAmenitiesHandler struct {
 	placeAmenitiesUseCase PlaceAmenitiesUseCase
 	hasher                *utils.Hasher
@@ -47,10 +46,11 @@ func (hdl *placeAmenitiesHandler) CreatePlaceAmenities() gin.HandlerFunc {
 
 func (hdl *placeAmenitiesHandler) DeletePlaceAmenities() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		user := ctx.MustGet("User").(common.Requester)
 		placeId := hdl.hasher.Decode(ctx.Param("pid"))
 		amenityId := hdl.hasher.Decode(ctx.Param("aid"))
 
-		if err := hdl.placeAmenitiesUseCase.DeletePlaceAmenity(ctx.Request.Context(), placeId, amenityId); err != nil {
+		if err := hdl.placeAmenitiesUseCase.DeletePlaceAmenity(ctx.Request.Context(), placeId, amenityId, user); err != nil {
 			panic(err)
 		}
 
@@ -72,6 +72,10 @@ func (hdl *placeAmenitiesHandler) GetPlaceAmenities() gin.HandlerFunc {
 			panic(err)
 		}
 
+		for i := range result {
+			result[i].FakeAmenityId = hdl.hasher.Encode(common.DBTypePlaceAmenities, result[i].AmenityId)
+			result[i].FakePlaceId = hdl.hasher.Encode(common.DBTypePlaceAmenities, result[i].PlaceId)
+		}
 		ctx.JSON(http.StatusOK, common.ResponseWithPaging(result, paging))
 	}
 }
@@ -89,8 +93,8 @@ func (hdl *placeAmenitiesHandler) GetAmenitiesByPlaceId() gin.HandlerFunc {
 
 		for i := range result {
 			data[i] = *result[i].Amenity
+			data[i].FakeId = hdl.hasher.Encode(data[i].Id, common.DBTypeAmenity)
 		}
-
 		ctx.JSON(http.StatusOK, common.Response(data))
 	}
 }

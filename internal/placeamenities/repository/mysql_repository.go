@@ -32,6 +32,7 @@ func (r *placeAmenitiesRepository) Create(ctx context.Context, placeAmenity *pla
 }
 
 func (r *placeAmenitiesRepository) Delete(ctx context.Context, condition map[string]any) error {
+
 	if err := r.db.Table(placeamenitiesmodel.PlaceAmenities{}.TableName()).Where(condition).Delete(nil).Error; err != nil {
 		return common.ErrorDB(err)
 	}

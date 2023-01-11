@@ -7,7 +7,7 @@
     + API Place => Done
     + API PlaceLike: User like place, User unlike place, List places liked by user => Done
     + API Amenities => Done
-+ API PlaceAmenities
+    + API PlaceAmenities => Done
 + API Booking
 + API Review => Need booking id, so need finish api booking before making api review
 + API Location

@@ -12,12 +12,17 @@ type PlaceAmenitiesRepo interface {
 	ListDataWithCondition(context.Context, map[string]any, *common.Paging, ...string) ([]placeamenitiesmodel.PlaceAmenities, error)
 }
 
-type placeAmenitiesUseCase struct {
-	placeAmenitiesRepo PlaceAmenitiesRepo
+type CheckPlaceOwner interface {
+	CheckOwner(placeId int, userId int) error
 }
 
-func NewPlaceAmenitiesUseCase(placeAmenitiesRepo PlaceAmenitiesRepo) *placeAmenitiesUseCase {
-	return &placeAmenitiesUseCase{placeAmenitiesRepo: placeAmenitiesRepo}
+type placeAmenitiesUseCase struct {
+	placeAmenitiesRepo PlaceAmenitiesRepo
+	checkPlaceOwner    CheckPlaceOwner
+}
+
+func NewPlaceAmenitiesUseCase(placeAmenitiesRepo PlaceAmenitiesRepo, checkPlaceOwner CheckPlaceOwner) *placeAmenitiesUseCase {
+	return &placeAmenitiesUseCase{placeAmenitiesRepo: placeAmenitiesRepo, checkPlaceOwner: checkPlaceOwner}
 }
 
 func (uc *placeAmenitiesUseCase) CreatePlaceAmenity(ctx context.Context, placeAmenities *placeamenitiesmodel.PlaceAmenities) error {
@@ -27,11 +32,14 @@ func (uc *placeAmenitiesUseCase) CreatePlaceAmenity(ctx context.Context, placeAm
 	return nil
 }
 
-func (uc *placeAmenitiesUseCase) DeletePlaceAmenity(ctx context.Context, pid int, aid int) error {
-	// business: user must be the owner of that place to have the right to delete the place's amenities
-	// check if requester.id == place.ownerId => need to find place.OwnerId
+func (uc *placeAmenitiesUseCase) DeletePlaceAmenity(ctx context.Context, placeId int, amenityId int, user common.Requester) error {
+	// business: user must be the owner of that place to have the permission to delete the place's amenities
+	// check if requester.id == place.ownerId => need to find place.OwnerId && requester.id
+	if err := uc.checkPlaceOwner.CheckOwner(placeId, user.GetUserId()); err != nil {
+		return common.ErrForbidden(err)
+	}
 
-	if err := uc.placeAmenitiesRepo.Delete(ctx, map[string]any{"place_id": pid, "amenity_id": aid}); err != nil {
+	if err := uc.placeAmenitiesRepo.Delete(ctx, map[string]any{"place_id": placeId, "amenity_id": amenityId}); err != nil {
 		return common.ErrCannotDeleteEntity(placeamenitiesmodel.EntityName, err)
 	}
 	return nil

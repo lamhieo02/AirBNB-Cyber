@@ -86,8 +86,9 @@ func main() {
 	amenityUC := amenityusecase.NewAmenityUseCase(amenityRepo)
 	amenityHdl := amenityhttp.NewAmenityHandler(amenityUC, hasher)
 
+	checkPlaceOwner := placerepository.NewPlaceRepository(db, sugarLogger)
 	placeAmenityRepo := placeamenitiesrepository.NewPlaceAmenitiesRepo(db, sugarLogger)
-	placeAmenityUC := placeamenitiesusecase.NewPlaceAmenitiesUseCase(placeAmenityRepo)
+	placeAmenityUC := placeamenitiesusecase.NewPlaceAmenitiesUseCase(placeAmenityRepo, checkPlaceOwner)
 	placeAmenityHdl := placeamenitieshttp.NewPlaceAmenitiesHandler(placeAmenityUC, hasher)
 	middlewares := middleware.NewMiddlewareManager(cfg, userCache)
 	router := gin.Default()

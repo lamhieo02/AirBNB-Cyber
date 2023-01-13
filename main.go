@@ -7,6 +7,9 @@ import (
 	amenityhttp "go01-airbnb/internal/amenity/delivery/http"
 	amenityrepository "go01-airbnb/internal/amenity/repository"
 	amenityusecase "go01-airbnb/internal/amenity/usecase"
+	bookinghttp "go01-airbnb/internal/booking/delivery/http"
+	bookingrepository "go01-airbnb/internal/booking/repository"
+	bookingusecase "go01-airbnb/internal/booking/usecase"
 	"go01-airbnb/internal/middleware"
 	placehttp "go01-airbnb/internal/place/delivery/http"
 	placerepository "go01-airbnb/internal/place/repository"
@@ -90,6 +93,10 @@ func main() {
 	placeAmenityRepo := placeamenitiesrepository.NewPlaceAmenitiesRepo(db, sugarLogger)
 	placeAmenityUC := placeamenitiesusecase.NewPlaceAmenitiesUseCase(placeAmenityRepo, checkPlaceOwner)
 	placeAmenityHdl := placeamenitieshttp.NewPlaceAmenitiesHandler(placeAmenityUC, hasher)
+
+	bookingRepo := bookingrepository.NewBookingRepository(db, sugarLogger)
+	bookingUC := bookingusecase.NewBookingUseCase(bookingRepo)
+	bookingHdl := bookinghttp.NewBookingHandler(bookingUC, hasher)
 	middlewares := middleware.NewMiddlewareManager(cfg, userCache)
 	router := gin.Default()
 
@@ -112,6 +119,7 @@ func main() {
 	v1.GET("/admin", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), userHdl.Profiles())
 	v1.POST("/register", userHdl.Register())
 	v1.POST("/login", userHdl.Login())
+	v1.PUT("/user", middlewares.RequiredAuth(), userHdl.UpdateProfile())
 
 	// Place Like
 	v1.POST("/like/:id", middlewares.RequiredAuth(), placeLikeHdl.UserLikePlace())
@@ -130,6 +138,13 @@ func main() {
 	v1.DELETE("/place_amenities/:pid/:aid", middlewares.RequiredAuth(), placeAmenityHdl.DeletePlaceAmenities())
 	v1.GET("/place_amenities", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), placeAmenityHdl.GetPlaceAmenities())
 	v1.GET("/place_amenities/:place_id", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), placeAmenityHdl.GetAmenitiesByPlaceId())
+
+	// Bookings
+	v1.POST("/bookings/:place_id", middlewares.RequiredAuth(), bookingHdl.CreateBooking())
+	v1.GET("/bookings", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), bookingHdl.GetAllBooking())
+	v1.GET("/bookings/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), bookingHdl.GetBookingById())
+	v1.PUT("/bookings/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), bookingHdl.UpdateBooking())
+	v1.DELETE("/bookings/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), bookingHdl.DeleteBooking())
 
 	//router.Run()
 	router.Run(":" + cfg.App.Port)

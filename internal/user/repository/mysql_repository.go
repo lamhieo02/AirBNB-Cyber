@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	usermodel "go01-airbnb/internal/user/model"
+	"go01-airbnb/pkg/common"
 	"gorm.io/gorm"
 )
 
@@ -41,4 +42,11 @@ func (r *userRepository) FindDataWithCondition(ctx context.Context, condition ma
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (r *userRepository) Update(ctx context.Context, data *usermodel.UserUpdate, condition map[string]any) error {
+	if err := r.db.Table(usermodel.User{}.TableName()).Where(condition).Updates(data).Error; err != nil {
+		return common.ErrorDB(err)
+	}
+	return nil
 }

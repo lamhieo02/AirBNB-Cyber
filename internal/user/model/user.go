@@ -14,7 +14,7 @@ import (
 //	RoleAdmin
 //
 // )
-const Name = "user"
+const EntityName = "user"
 
 type User struct {
 	common.SqlModel
@@ -52,6 +52,14 @@ type UserRegister struct {
 	FirstName string        `json:"firstName" gorm:"column:first_name"`
 	LastName  string        `json:"lastName" gorm:"column:last_name"`
 	Role      string        `json:"-" gorm:"column:role"`
+	Avatar    *common.Image `json:"avatar" gorm:"column:avatar"`
+}
+
+type UserUpdate struct {
+	FirstName string        `json:"firstName" gorm:"column:first_name"`
+	LastName  string        `json:"lastName" gorm:"column:last_name"`
+	Role      string        `json:"role" gorm:"column:role"`
+	Phone     string        `json:"phone" gorm:"column:phone"`
 	Avatar    *common.Image `json:"avatar" gorm:"column:avatar"`
 }
 

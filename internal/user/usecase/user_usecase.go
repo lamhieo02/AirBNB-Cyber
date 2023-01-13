@@ -11,6 +11,7 @@ import (
 type UserRepository interface {
 	Create(context.Context, *usermodel.UserRegister) error
 	FindDataWithCondition(context.Context, map[string]any) (*usermodel.User, error)
+	Update(context.Context, *usermodel.UserUpdate, map[string]any) error
 }
 
 type userUseCase struct {
@@ -40,7 +41,7 @@ func (u *userUseCase) Register(ctx context.Context, data *usermodel.UserRegister
 	}
 
 	if err := u.userRepository.Create(ctx, data); err != nil {
-		return common.ErrCannotCreateEntity(usermodel.Name, err)
+		return common.ErrCannotCreateEntity(usermodel.EntityName, err)
 	}
 
 	return nil
@@ -66,4 +67,11 @@ func (u *userUseCase) Login(ctx context.Context, data *usermodel.UserLogin) (*ut
 	}
 
 	return token, nil
+}
+
+func (u *userUseCase) UpdateProfile(ctx context.Context, data *usermodel.UserUpdate, userEmail string) error {
+	if err := u.userRepository.Update(ctx, data, map[string]any{"email": userEmail}); err != nil {
+		return common.ErrCannotUpdateEntity(usermodel.EntityName, err)
+	}
+	return nil
 }

@@ -36,7 +36,7 @@ type myClaim struct {
 //
 
 func GenerateJWT(data TokenPayload, cfg *config.Config) (*Token, error) {
-	expiredAt := jwt.NewNumericDate(time.Now().Local().Add(time.Hour + 12))
+	expiredAt := jwt.NewNumericDate(time.Now().Local().Add(time.Hour * 12))
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, myClaim{
 		data,
 		jwt.RegisteredClaims{

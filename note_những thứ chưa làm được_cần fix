@@ -1,6 +1,6 @@
-+ Khi chạy docker compose up thì sẽ có thể có lỗi - không kết nối được mysql, vì container của app run trươớc khi container của mysql run
+- Khi chạy docker compose up thì sẽ có thể có lỗi - không kết nối được mysql, vì container của app run trươớc khi container của mysql run
     => Sử dụng wait - for để solve this problem: https://docs.docker.com/compose/startup-order/
-+ Chưa xử lí được paging của GetAll PlaceAmenities
+- Chưa xử lí được paging của GetAll PlaceAmenities
 
     + API Authentication => Done
     + API User => Done
@@ -8,7 +8,7 @@
     + API PlaceLike: User like place, User unlike place, List places liked by user => Done
     + API Amenities => Done
     + API PlaceAmenities => Done
-+ API Booking
+    + API Booking => Done
 + API Review => Need booking id, so need finish api booking before making api review
 + API Location
 + API Upload

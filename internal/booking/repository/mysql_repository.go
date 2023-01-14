@@ -35,7 +35,7 @@ func (r *bookingRepository) Create(ctx context.Context, booking *bookingmodel.Bo
 func (r *bookingRepository) ListDataWithCondition(ctx context.Context, condition map[string]any, paging *common.Paging) ([]bookingmodel.Booking, error) {
 	var data []bookingmodel.Booking
 
-	db := r.db.Table(bookingmodel.Booking{}.TableName())
+	db := r.db.Table(bookingmodel.Booking{}.TableName()).Where(condition)
 	if err := db.Count(&paging.Total).Error; err != nil {
 		return nil, common.ErrorDB(err)
 	}

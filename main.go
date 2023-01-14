@@ -20,6 +20,9 @@ import (
 	placelikehttp "go01-airbnb/internal/placelike/delivery/http"
 	placelikerepository "go01-airbnb/internal/placelike/repository"
 	placelikeusecase "go01-airbnb/internal/placelike/usecase"
+	reviewhttp "go01-airbnb/internal/review/delivery/http"
+	reviewrepository "go01-airbnb/internal/review/repository"
+	reviewusecase "go01-airbnb/internal/review/usecase"
 	uploadhttp "go01-airbnb/internal/upload/delivery/http"
 	userhttp "go01-airbnb/internal/user/delivery/http"
 	userrepository "go01-airbnb/internal/user/repository"
@@ -97,6 +100,11 @@ func main() {
 	bookingRepo := bookingrepository.NewBookingRepository(db, sugarLogger)
 	bookingUC := bookingusecase.NewBookingUseCase(bookingRepo)
 	bookingHdl := bookinghttp.NewBookingHandler(bookingUC, hasher)
+
+	reviewRepo := reviewrepository.NewReviewRepository(db, sugarLogger)
+	reviewUC := reviewusecase.NewReviewUseCase(reviewRepo)
+	reviewHdl := reviewhttp.NewReviewHandler(reviewUC, hasher)
+
 	middlewares := middleware.NewMiddlewareManager(cfg, userCache)
 	router := gin.Default()
 
@@ -145,6 +153,13 @@ func main() {
 	v1.GET("/bookings/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), bookingHdl.GetBookingById())
 	v1.PUT("/bookings/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), bookingHdl.UpdateBooking())
 	v1.DELETE("/bookings/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), bookingHdl.DeleteBooking())
+
+	//Reviews
+	v1.POST("/reviews/:booking_id", middlewares.RequiredAuth(), reviewHdl.CreateReview())
+	v1.DELETE("/reviews/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("host", "admin"), reviewHdl.DeleteReview())
+	v1.GET("/reviews", middlewares.RequiredAuth(), middlewares.RequiredRoles("host", "admin"), reviewHdl.GetAllReview())
+	v1.GET("/reviews/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("host", "admin"), reviewHdl.GetReviewById())
+	v1.GET("/place_reviews/:place_id", middlewares.RequiredAuth(), reviewHdl.GetAllReviewByPlaceId())
 
 	//router.Run()
 	router.Run(":" + cfg.App.Port)

@@ -5,10 +5,11 @@
     + API Authentication => Done
     + API User => Done
     + API Place => Done
+    + API Location => Done
+    + API Booking => Done
     + API PlaceLike: User like place, User unlike place, List places liked by user => Done
     + API Amenities => Done
     + API PlaceAmenities => Done
-    + API Booking => Done
     + API Review => Need booking id, so need finish api booking before making api review => Done
-    + API Location => Done
+   
 + API Upload

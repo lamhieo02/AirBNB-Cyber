@@ -6,8 +6,9 @@ const (
 	DBTypeAmenity        = 3
 	DBPaging             = 4
 	DBTypePlaceAmenities = 5
-	DBBooking            = 6
-	DBReview             = 7
+	DBTypeBooking        = 6
+	DBTypeReview         = 7
+	DBTypeLocation       = 8
 )
 
 type Requester interface {

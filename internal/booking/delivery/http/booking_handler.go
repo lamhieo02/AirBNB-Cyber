@@ -60,7 +60,7 @@ func (hdl *bookingHandler) GetAllBooking() gin.HandlerFunc {
 		}
 
 		for i := range bookings {
-			bookings[i].FakeId = hdl.hasher.Encode(bookings[i].Id, common.DBBooking)
+			bookings[i].FakeId = hdl.hasher.Encode(bookings[i].Id, common.DBTypeBooking)
 		}
 		ctx.JSON(http.StatusOK, common.ResponseWithPaging(bookings, paging))
 	}
@@ -75,7 +75,7 @@ func (hdl *bookingHandler) GetBookingById() gin.HandlerFunc {
 			panic(err)
 		}
 
-		booking.FakeId = hdl.hasher.Encode(booking.Id, common.DBBooking)
+		booking.FakeId = hdl.hasher.Encode(booking.Id, common.DBTypeBooking)
 
 		ctx.JSON(http.StatusOK, common.Response(booking))
 	}

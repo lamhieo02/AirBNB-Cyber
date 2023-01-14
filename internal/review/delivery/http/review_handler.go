@@ -63,7 +63,7 @@ func (hdl *reviewHandler) GetAllReview() gin.HandlerFunc {
 			panic(err)
 		}
 		for i := range result {
-			result[i].FakeId = hdl.hasher.Encode(result[i].Id, common.DBReview)
+			result[i].FakeId = hdl.hasher.Encode(result[i].Id, common.DBTypeReview)
 		}
 		ctx.JSON(http.StatusOK, common.ResponseWithPaging(result, paging))
 	}
@@ -76,7 +76,7 @@ func (hdl *reviewHandler) GetReviewById() gin.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
-		result.FakeId = hdl.hasher.Encode(result.Id, common.DBReview)
+		result.FakeId = hdl.hasher.Encode(result.Id, common.DBTypeReview)
 
 		ctx.JSON(http.StatusOK, common.Response(result))
 	}

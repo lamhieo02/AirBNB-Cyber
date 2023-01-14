@@ -37,7 +37,7 @@ func (uc *placeUseCase) GetPlaces(ctx context.Context, paging *common.Paging, fi
 
 	// business logic
 	//keys that are the models we want to link
-	data, err := uc.placeRepo.ListDataWithCondition(ctx, paging, filter, "Owner")
+	data, err := uc.placeRepo.ListDataWithCondition(ctx, paging, filter, "Owner", "Location")
 
 	if err != nil {
 		return nil, common.ErrCannotListEntity(placemodel.EntityName, err)
@@ -48,7 +48,7 @@ func (uc *placeUseCase) GetPlaces(ctx context.Context, paging *common.Paging, fi
 func (uc *placeUseCase) GetPlaceById(ctx context.Context, id int) (*placemodel.Place, error) {
 
 	// business logic
-	data, err := uc.placeRepo.FindDataWithCondition(ctx, map[string]any{"id": id}, "Owner")
+	data, err := uc.placeRepo.FindDataWithCondition(ctx, map[string]any{"id": id}, "Owner", "Location")
 
 	if err != nil {
 		return nil, common.ErrEntityNotFound(placemodel.EntityName, err)

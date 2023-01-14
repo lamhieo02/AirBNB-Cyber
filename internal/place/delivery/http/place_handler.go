@@ -28,6 +28,7 @@ func NewPlaceHandler(placeUseCase PlaceUseCase, hasher *utils.Hasher) *placeHand
 func (hdl *placeHandler) CreatePlace() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
+		locationId := hdl.hasher.Decode(ctx.Param("location_id"))
 		requester := ctx.MustGet("User").(common.Requester)
 		var place placemodel.Place
 
@@ -35,7 +36,7 @@ func (hdl *placeHandler) CreatePlace() gin.HandlerFunc {
 			panic(common.ErrBadRequest(err))
 		}
 		place.OwnerId = requester.GetUserId()
-
+		place.LocationId = locationId
 		if err := hdl.placeUseCase.CreatePlace(ctx.Request.Context(), &place); err != nil {
 			panic(err)
 		}
@@ -72,6 +73,8 @@ func (hdl *placeHandler) GetPlaces() gin.HandlerFunc {
 				continue
 			}
 			data[i].Owner.FakeId = hdl.hasher.Encode(v.Owner.Id, common.DBTypeUser)
+			data[i].Location.FakeId = hdl.hasher.Encode(v.Location.Id, common.DBTypeUser)
+
 		}
 		ctx.JSON(http.StatusOK, common.ResponseWithPaging(data, paging))
 	}
@@ -89,6 +92,9 @@ func (hdl *placeHandler) GetPlaceById() gin.HandlerFunc {
 		data.FakeId = hdl.hasher.Encode(data.Id, common.DBTypePlace)
 		if data.Owner != nil {
 			data.Owner.FakeId = hdl.hasher.Encode(data.Owner.Id, common.DBTypeUser)
+		}
+		if data.Location != nil {
+			data.Location.FakeId = hdl.hasher.Encode(data.Location.Id, common.DBTypeUser)
 		}
 		ctx.JSON(http.StatusOK, common.Response(data))
 	}

@@ -10,6 +10,9 @@ import (
 	bookinghttp "go01-airbnb/internal/booking/delivery/http"
 	bookingrepository "go01-airbnb/internal/booking/repository"
 	bookingusecase "go01-airbnb/internal/booking/usecase"
+	locationhttp "go01-airbnb/internal/location/delivery/http"
+	locationrepository "go01-airbnb/internal/location/repository"
+	locationusecase "go01-airbnb/internal/location/usecase"
 	"go01-airbnb/internal/middleware"
 	placehttp "go01-airbnb/internal/place/delivery/http"
 	placerepository "go01-airbnb/internal/place/repository"
@@ -105,6 +108,10 @@ func main() {
 	reviewUC := reviewusecase.NewReviewUseCase(reviewRepo)
 	reviewHdl := reviewhttp.NewReviewHandler(reviewUC, hasher)
 
+	locationRepo := locationrepository.NewLocationRepository(db, sugarLogger)
+	locationUC := locationusecase.NewLocationUseCase(locationRepo)
+	locationHdl := locationhttp.NewLocationHandler(locationUC, hasher)
+
 	middlewares := middleware.NewMiddlewareManager(cfg, userCache)
 	router := gin.Default()
 
@@ -161,6 +168,12 @@ func main() {
 	v1.GET("/reviews/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("host", "admin"), reviewHdl.GetReviewById())
 	v1.GET("/place_reviews/:place_id", middlewares.RequiredAuth(), reviewHdl.GetAllReviewByPlaceId())
 
+	//Locations
+	v1.POST("/locations", middlewares.RequiredAuth(), middlewares.RequiredRoles("host", "admin"), locationHdl.CreateLocation())
+	v1.DELETE("/locations/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("host", "admin"), locationHdl.DeleteLocation())
+	v1.GET("/locations", middlewares.RequiredAuth(), middlewares.RequiredRoles("host", "admin"), locationHdl.GetAllLocation())
+	v1.PUT("/locations/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("host", "admin"), locationHdl.UpdateLocation())
+	v1.GET("/locations/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("host", "admin"), locationHdl.GetLocationById())
 	//router.Run()
 	router.Run(":" + cfg.App.Port)
 }

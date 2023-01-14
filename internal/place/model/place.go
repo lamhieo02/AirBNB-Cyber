@@ -11,12 +11,14 @@ type Place struct {
 	OwnerId int                `json:"-" gorm:"column:owner_id"`
 	Owner   *common.SimpleUser `json:"owner" gorm:"preload:false"`
 	//CityId        int                `json:"cityId" gorm:"column:city_id"`
-	Name          string         `json:"name" gorm:"column:name"`
-	Address       string         `json:"address" gorm:"column:address"`
-	Cover         *common.Images `json:"cover" gorm:"column:cover"`
-	Lat           float64        `json:"lat" gorm:"column:lat"`
-	Lng           float64        `json:"lng" gorm:"column:lng"`
-	PricePerNight float64        `json:"pricePerNight" gorm:"column:price_per_night"`
+	Name          string                 `json:"name" gorm:"column:name"`
+	Address       string                 `json:"address" gorm:"column:address"`
+	Cover         *common.Images         `json:"cover" gorm:"column:cover"`
+	Lat           float64                `json:"lat" gorm:"column:lat"`
+	Lng           float64                `json:"lng" gorm:"column:lng"`
+	LocationId    int                    `json:"-" gorm:"column:location_id"`
+	Location      *common.SimpleLocation `json:"location" gorm:"preload:false"`
+	PricePerNight float64                `json:"pricePerNight" gorm:"column:price_per_night"`
 }
 
 const EntityName = "place"

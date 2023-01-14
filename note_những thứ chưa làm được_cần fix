@@ -9,6 +9,6 @@
     + API Amenities => Done
     + API PlaceAmenities => Done
     + API Booking => Done
-+ API Review => Need booking id, so need finish api booking before making api review
+    + API Review => Need booking id, so need finish api booking before making api review => Done
 + API Location
 + API Upload

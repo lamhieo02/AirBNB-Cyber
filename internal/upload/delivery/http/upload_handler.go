@@ -1,12 +1,13 @@
 package uploadhttp
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go01-airbnb/pkg/common"
 	"go01-airbnb/pkg/upload"
 	"image"
+	"io"
+	"log"
 	"net/http"
 )
 
@@ -20,10 +21,6 @@ func NewUploadHandler(s3Provider upload.UploadProvider) *uploadHandler {
 
 func (hdl *uploadHandler) Upload() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		fileHeader, err := context.FormFile("file")
-		if err != nil {
-			panic(common.ErrBadRequest(err))
-		}
 
 		//Save file trực tiếp vào server của mình
 		//if err := context.SaveUploadedFile(fileHeader, fmt.Sprintf("static/%s", fileHeader.Filename)); err != nil {
@@ -32,6 +29,10 @@ func (hdl *uploadHandler) Upload() gin.HandlerFunc {
 		//context.JSON(http.StatusOK, common.Response(common.Image{
 		//	Url: "http://localhost:8080/static/" + fileHeader.Filename,
 		//}))
+		fileHeader, err := context.FormFile("file")
+		if err != nil {
+			panic(common.ErrBadRequest(err))
+		}
 
 		folder := context.DefaultPostForm("folder", "img")
 		fileName := fileHeader.Filename // image.png
@@ -48,9 +49,9 @@ func (hdl *uploadHandler) Upload() gin.HandlerFunc {
 			panic(common.ErrBadRequest(err))
 		}
 
-		//// Get width and height of image
+		// Get width and height of image
 		//fileBytes := bytes.NewBuffer(dataBytes)
-		//
+
 		//w, h, err := getImageDimension(fileBytes)
 		//if err != nil {
 		//	panic(common.ErrBadRequest(err))
@@ -69,9 +70,17 @@ func (hdl *uploadHandler) Upload() gin.HandlerFunc {
 	}
 }
 
-func getImageDimension(file *bytes.Buffer) (int, int, error) {
-	img, _, err := image.DecodeConfig(file)
+//	func getImageDimension(file *bytes.Buffer) (int, int, error) {
+//		img, _, err := image.DecodeConfig(file)
+//		if err != nil {
+//			return 0, 0, err
+//		}
+//		return img.Width, img.Height, nil
+//	}
+func getImageDimension(reader io.Reader) (int, int, error) {
+	img, _, err := image.DecodeConfig(reader)
 	if err != nil {
+		log.Println("err:", err)
 		return 0, 0, err
 	}
 	return img.Width, img.Height, nil

@@ -123,6 +123,7 @@ func main() {
 
 	v1.POST("upload", uploadHdl.Upload())
 
+	//Place
 	v1.POST("/places", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), placeHdl.CreatePlace())
 	v1.GET("/places", placeHdl.GetPlaces())
 	v1.GET("/places/:id", placeHdl.GetPlaceById())

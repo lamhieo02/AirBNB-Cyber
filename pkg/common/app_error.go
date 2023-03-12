@@ -75,3 +75,6 @@ func ErrCannotDeleteEntity(entity string, cause error) *AppError {
 func ErrEntityExisted(entity string, cause error) *AppError {
 	return NewCustomError(cause, fmt.Sprintf("%s have existed", entity))
 }
+func ErrIsNotOwner(cause error) *AppError {
+	return NewCustomError(cause, fmt.Sprintf("Check Owner is fail"))
+}

@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func TestPlaceAmenitiesUseCase_CreatePlaceAmenity(t *testing.T) {
+func TestPlaceAmenitiesUseCase_DeletePlaceAmenity(t *testing.T) {
 	// Cấu hình các dependencies
 	ctrl := gomock.NewController(t)
 	placeAmtRepoMock := mock.NewMockPlaceAmenitiesRepo(ctrl)

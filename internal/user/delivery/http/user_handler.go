@@ -43,6 +43,7 @@ func (hdl *userHandler) Register() gin.HandlerFunc {
 		c.JSON(http.StatusOK, gin.H{"data": data.Id})
 	}
 }
+
 func (hdl *userHandler) Login() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var credentials usermodel.UserLogin

@@ -25,3 +25,4 @@ COPY config/config.yaml ./config/
 COPY migrations migrations
 #CMD ["make migrate_up"]
 CMD ["/app/go-airbnb"]
+# lamheo

@@ -31,10 +31,10 @@ jobs:
       - name: Build and push backend image
         if: github.event.pull_request.merged && startsWith(github.head_ref, 'backend')
         env:
-          DOCKERHUB_USERNAME: ${{ secrets.lamnguyen0206 }}
-          DOCKERHUB_PASSWORD: ${{ secrets.109339Lam }}
+          DOCKERHUB_USERNAME: lamnguyen0206
+          DOCKERHUB_PASSWORD: 109339Lam@
         run: |
           cd backend
-          docker build -t lamnguyen0206/backend:latest .
-          docker login -u lamnguyen0206 -p 109339Lam
-          docker push lamnguyen0206/backend:latest
+          docker build -t DOCKERHUB_USERNAME/backend:latest .
+          docker login -u DOCKERHUB_USERNAME -p DOCKERHUB_PASSWORD
+          docker push DOCKERHUB_USERNAME/backend:latest

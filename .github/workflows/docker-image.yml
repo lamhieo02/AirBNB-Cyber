@@ -34,7 +34,6 @@ jobs:
           DOCKERHUB_USERNAME: lamnguyen0206
           DOCKERHUB_PASSWORD: 109339Lam@
         run: |
-          cd backend
           docker build -t DOCKERHUB_USERNAME/backend:latest .
           docker login -u DOCKERHUB_USERNAME -p DOCKERHUB_PASSWORD
           docker push DOCKERHUB_USERNAME/backend:latest

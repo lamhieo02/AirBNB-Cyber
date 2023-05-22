@@ -34,6 +34,6 @@ jobs:
           DOCKERHUB_USERNAME: lamnguyen0206
           DOCKERHUB_PASSWORD: 109339Lam@
         run: |
-          docker build -t DOCKERHUB_USERNAME/backend:latest .
-          docker login -u DOCKERHUB_USERNAME -p DOCKERHUB_PASSWORD
-          docker push DOCKERHUB_USERNAME/backend:latest
+          docker build -t ${{ env.DOCKERHUB_USERNAME }}/backend:latest .
+          docker login -u ${{ env.DOCKERHUB_USERNAME }} -p ${{ env.DOCKERHUB_PASSWORD }}
+          docker push ${{ env.DOCKERHUB_USERNAME }}/backend:latest

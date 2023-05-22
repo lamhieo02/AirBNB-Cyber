@@ -29,7 +29,7 @@ jobs:
 #          docker login -u lamnguyen0206 -p 109339Lam@
 #          docker push lamnguyen0206/frontend:latest
       - name: Build and push backend image
-        if: github.event.pull_request.merged && startsWith(github.head_ref, 'backend')
+#        if: github.event.pull_request.merged && startsWith(github.head_ref, 'backend')
         env:
           DOCKERHUB_USERNAME: lamnguyen0206
           DOCKERHUB_PASSWORD: 109339Lam@

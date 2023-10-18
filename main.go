@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"go01-airbnb/cache"
 	"go01-airbnb/config"
 	amenityhttp "go01-airbnb/internal/amenity/delivery/http"
@@ -36,6 +35,8 @@ import (
 	"go01-airbnb/pkg/upload"
 	"go01-airbnb/pkg/utils"
 	"log"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -123,7 +124,7 @@ func main() {
 
 	v1.POST("upload", uploadHdl.Upload())
 
-	v1.POST("/places", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), placeHdl.CreatePlace())
+	v1.POST("/places", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host", "guest"), placeHdl.CreatePlace())
 	v1.GET("/places", placeHdl.GetPlaces())
 	v1.GET("/places/:id", placeHdl.GetPlaceById())
 	v1.PUT("/places/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("admin", "host"), placeHdl.UpdatePlace())

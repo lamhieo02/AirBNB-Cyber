@@ -8,7 +8,7 @@ app:
 mysql:
   Host: go-mysql
   ContainerName: go01_mysql
-  Port: 3306
+  Port: 3308
   User: root
   Password: 109339Lam@
   DBName: go-airbnb

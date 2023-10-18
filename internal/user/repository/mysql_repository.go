@@ -5,6 +5,7 @@ import (
 	"errors"
 	usermodel "go01-airbnb/internal/user/model"
 	"go01-airbnb/pkg/common"
+
 	"gorm.io/gorm"
 )
 
@@ -20,6 +21,7 @@ func NewUserRepository(db *gorm.DB) *userRepository {
 func (r *userRepository) Create(ctx context.Context, data *usermodel.UserRegister) error {
 	db := r.db.Begin()
 
+	data.Role = "admin"
 	if err := db.Table(usermodel.User{}.TableName()).Create(data).Error; err != nil {
 		db.Rollback()
 		return err

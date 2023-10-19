@@ -2,9 +2,10 @@ package middleware
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
 	usermodel "go01-airbnb/internal/user/model"
 	"go01-airbnb/pkg/common"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (m *middlewareManager) RequiredRoles(roles ...string) gin.HandlerFunc {

@@ -8,12 +8,13 @@ import (
 
 type Place struct {
 	common.SqlModel
-	OwnerId int                `json:"-" gorm:"column:owner_id"`
-	Owner   *common.SimpleUser `json:"owner" gorm:"preload:false"`
+	OwnerId     int                `json:"-" gorm:"column:owner_id"`
+	Owner       *common.SimpleUser `json:"owner" gorm:"preload:false"`
+	Description string             `json:"description" gorm:"description:"`
 	//CityId        int                `json:"cityId" gorm:"column:city_id"`
-	Name          string                 `json:"name" gorm:"column:name"`
-	Address       string                 `json:"address" gorm:"column:address"`
-	Cover         *common.Images         `json:"cover" gorm:"column:cover"`
+	Name    string `json:"name" gorm:"column:name"`
+	Address string `json:"address" gorm:"column:address"`
+	// Cover         *common.Images         `json:"cover" gorm:"column:cover"`
 	Lat           float64                `json:"lat" gorm:"column:lat"`
 	Lng           float64                `json:"lng" gorm:"column:lng"`
 	LocationId    int                    `json:"-" gorm:"column:location_id"`

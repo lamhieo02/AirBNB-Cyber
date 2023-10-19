@@ -3,8 +3,6 @@ package cache
 import (
 	"context"
 	usermodel "go01-airbnb/internal/user/model"
-	"go01-airbnb/pkg/common"
-	"time"
 )
 
 type UserStore interface {
@@ -20,14 +18,14 @@ func NewAuthUserCache(store UserStore, cacheStore Cache) *authUserCache {
 }
 
 func (c *authUserCache) FindDataWithCondition(ctx context.Context, condition map[string]any) (*usermodel.User, error) {
-	var user *usermodel.User
+	//var user *usermodel.User
 
-	var key string
-	userEmail := condition["email"].(string)
+	// var key string
+	// userEmail := condition["email"].(string)
 
-	key = "user:" + userEmail // key store in redis
+	// key = "user:" + userEmail // key store in redis
 
-	c.cacheStore.Get(ctx, key, &user)
+	// c.cacheStore.Get(ctx, key, &user)
 
 	// Try to find data of user in cache
 	//if err := c.cacheStore.Get(ctx, key, &user); err != nil {
@@ -35,9 +33,9 @@ func (c *authUserCache) FindDataWithCondition(ctx context.Context, condition map
 	//}
 
 	// if data is found in cache, then return the data
-	if user != nil {
-		return user, nil
-	}
+	// if user != nil {
+	// 	return user, nil
+	// }
 
 	// if data is not found in cache, then query in real database to find data
 	u, err := c.store.FindDataWithCondition(ctx, condition)
@@ -46,9 +44,9 @@ func (c *authUserCache) FindDataWithCondition(ctx context.Context, condition map
 	}
 
 	// save data to cache
-	if err := c.cacheStore.Set(ctx, key, &u, time.Hour*2); err != nil {
-		panic(common.NewCustomError(err, "Error when cache.Set() data"))
-	}
+	// if err := c.cacheStore.Set(ctx, key, &u, time.Hour*2); err != nil {
+	// 	panic(common.NewCustomError(err, "Error when cache.Set() data"))
+	// }
 	return u, err
 
 }

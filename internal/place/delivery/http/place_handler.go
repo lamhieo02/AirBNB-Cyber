@@ -2,11 +2,13 @@ package placehttp
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
 	placemodel "go01-airbnb/internal/place/model"
 	"go01-airbnb/pkg/common"
 	"go01-airbnb/pkg/utils"
 	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 type PlaceUseCase interface {
@@ -28,7 +30,7 @@ func NewPlaceHandler(placeUseCase PlaceUseCase, hasher *utils.Hasher) *placeHand
 func (hdl *placeHandler) CreatePlace() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		locationId := hdl.hasher.Decode(ctx.Param("location_id"))
+		locationId, _ := strconv.Atoi(ctx.Param("location_id"))
 		requester := ctx.MustGet("User").(common.Requester)
 		var place placemodel.Place
 

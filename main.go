@@ -36,6 +36,7 @@ import (
 	"go01-airbnb/pkg/utils"
 	"log"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -116,6 +117,11 @@ func main() {
 	middlewares := middleware.NewMiddlewareManager(cfg, userCache)
 	router := gin.Default()
 
+	// fix error CORS
+	configCORS := cors.DefaultConfig()
+	configCORS.AllowOrigins = []string{"http://localhost:5173"}
+	configCORS.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	router.Use(cors.New(configCORS))
 	// Global middleware, nghĩa là tất cả các routers đều phải đi qua middleware này
 	router.Use(middlewares.Recover())
 	router.Static("/static", "./static")
@@ -176,5 +182,6 @@ func main() {
 	v1.PUT("/locations/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("host", "admin"), locationHdl.UpdateLocation())
 	v1.GET("/locations/:id", middlewares.RequiredAuth(), middlewares.RequiredRoles("host", "admin"), locationHdl.GetLocationById())
 	//router.Run()
+
 	router.Run(":" + cfg.App.Port)
 }

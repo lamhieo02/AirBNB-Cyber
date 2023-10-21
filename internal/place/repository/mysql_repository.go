@@ -3,9 +3,10 @@ package placerepository
 import (
 	"context"
 	"errors"
-	"go.uber.org/zap"
 	placemodel "go01-airbnb/internal/place/model"
 	"go01-airbnb/pkg/common"
+
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -42,34 +43,37 @@ func (r *placeRepository) ListDataWithCondition(ctx context.Context, paging *com
 
 	//db := r.db.Table(placemodel.Place{}.TableName())
 	db := r.db.Model(&placemodel.Place{})
-	if v := filter.OwnerId; v > 0 {
-		db = db.Where("owner_id=?", v)
-	}
-	if v := filter.CityId; v > 0 {
-		db = db.Where("city_id=?", v)
+
+	if paging != nil && filter != nil {
+		if v := filter.OwnerId; v > 0 {
+			db = db.Where("owner_id=?", v)
+		}
+		if v := filter.CityId; v > 0 {
+			db = db.Where("city_id=?", v)
+		}
+
+		if err := db.Count(&paging.Total).Error; err != nil {
+			return nil, common.ErrorDB(err)
+		}
+
+		for k := range keys {
+			db = db.Preload(keys[k])
+		}
+
+		if v := paging.Cursor; v != 0 {
+			db = db.Where("id > ?", v)
+		} else {
+			db = db.Offset((paging.Page - 1) * paging.Limit)
+		}
 	}
 
-	if err := db.Count(&paging.Total).Error; err != nil {
+	if err := db.Find(&data).Error; err != nil {
 		return nil, common.ErrorDB(err)
 	}
 
-	for k := range keys {
-		db = db.Preload(keys[k])
-	}
-
-	if v := paging.Cursor; v != 0 {
-		db = db.Where("id > ?", v)
-	} else {
-		db = db.Offset((paging.Page - 1) * paging.Limit)
-	}
-
-	if err := db.Limit(paging.Limit).Find(&data).Error; err != nil {
-		return nil, common.ErrorDB(err)
-	}
-
-	if len(data) > 0 {
-		paging.NextCursor = data[len(data)-1].Id
-	}
+	// if len(data) > 0 {
+	// 	paging.NextCursor = data[len(data)-1].Id
+	// }
 	return data, nil
 }
 

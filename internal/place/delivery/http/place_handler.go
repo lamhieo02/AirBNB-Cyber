@@ -51,19 +51,19 @@ func (hdl *placeHandler) CreatePlace() gin.HandlerFunc {
 func (hdl *placeHandler) GetPlaces() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		//paging
-		var paging common.Paging
+		// var paging common.Paging
 
-		if err := ctx.ShouldBind(&paging); err != nil {
-			panic(common.ErrBadRequest(err))
-		}
+		// if err := ctx.ShouldBind(&paging); err != nil {
+		// 	panic(common.ErrBadRequest(err))
+		// }
 
-		paging.Fulfill()
-		//filter
-		var filter placemodel.Filter
-		if err := ctx.ShouldBind(&filter); err != nil {
-			panic(common.ErrBadRequest(err))
-		}
-		data, err := hdl.placeUseCase.GetPlaces(ctx.Request.Context(), &paging, &filter)
+		// paging.Fulfill()
+		// //filter
+		// var filter placemodel.Filter
+		// if err := ctx.ShouldBind(&filter); err != nil {
+		// 	panic(common.ErrBadRequest(err))
+		// }
+		data, err := hdl.placeUseCase.GetPlaces(ctx.Request.Context(), nil, nil)
 
 		if err != nil {
 			//fmt.Println(err.(*common.AppError).RootErr())
@@ -78,7 +78,8 @@ func (hdl *placeHandler) GetPlaces() gin.HandlerFunc {
 			data[i].Location.FakeId = hdl.hasher.Encode(v.Location.Id, common.DBTypeUser)
 
 		}
-		ctx.JSON(http.StatusOK, common.ResponseWithPaging(data, paging))
+		// ctx.JSON(http.StatusOK, common.ResponseWithPaging(data, paging))
+		ctx.JSON(http.StatusOK, data)
 	}
 }
 

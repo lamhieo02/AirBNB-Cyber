@@ -20,9 +20,15 @@ aws:
   SecretKey: eK3X0fn5qLMF7s6xJyhevtWVmxwNfAHFfflX9J5Y
   S3Domain: d24vk7oviyillz.cloudfront.net
   S3Bucket: lamhieogo
+  RdsMyqlEndpoint: airbnb.cdoiqcyjepa6.ap-southeast-1.rds.amazonaws.com
+  RdsMyqlPassword: 109339Lam
+  RdsMysqlUser: admin
+  RdsMysqDbName: airbnb_demo
+  RdsMysqPort: 3306
+
 
 redis:
-  # Host: redis
+  #Host: redis
   Host: localhost
   Port: 6379
   Password: ""

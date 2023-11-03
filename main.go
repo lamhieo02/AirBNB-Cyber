@@ -121,6 +121,7 @@ func main() {
 	configCORS := cors.DefaultConfig()
 	configCORS.AllowOrigins = []string{"http://localhost:5173"}
 	configCORS.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	configCORS.AllowHeaders = []string{"Authorization", "Content-type"}
 	router.Use(cors.New(configCORS))
 	// Global middleware, nghĩa là tất cả các routers đều phải đi qua middleware này
 	router.Use(middlewares.Recover())

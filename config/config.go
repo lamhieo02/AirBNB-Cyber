@@ -34,6 +34,11 @@ type AWSConfig struct {
 	SecretKey string
 	S3Bucket  string
 	S3Domain  string
+	RdsMyqlEndpoint string
+	RdsMyqlPassword string
+	RdsMysqlUser string
+	RdsMysqDbName string
+	RdsMysqPort string
 }
 type RedisConfig struct {
 	Host     string

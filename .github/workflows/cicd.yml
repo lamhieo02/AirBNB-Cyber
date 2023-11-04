@@ -1,0 +1,49 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go
+
+on:
+  pull_request:
+    branches: [ "develop" ]
+    types:
+        - closed
+  
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.19'
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Test
+      run: go test -v ./...
+
+    - name: Login to AWS ECR
+      run: |
+        aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 492654507682.dkr.ecr.ap-southeast-1.amazonaws.com
+    
+    - name: Build and push Docker image
+      run: |
+        docker build -t airbnb-cyber-api .
+        docker tag airbnb-cyber-api:latest 492654507682.dkr.ecr.ap-southeast-1.amazonaws.com/airbnb-cyber-api:latest
+        docker push 492654507682.dkr.ecr.ap-southeast-1.amazonaws.com/airbnb-cyber-api:latest
+    
+    - name: Deploy to Server EC2
+      uses: appleboy/ssh-action@master
+      with: 
+        host: ec2-54-255-232-27.ap-southeast-1.compute.amazonaws.com
+        username: ubuntu
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          sudo su
+          docker stop $(docker ps -a -q)
+          docker rm $(docker ps -a -q)
+          docker run --name AppBE -p 8080:8080 492654507682.dkr.ecr.ap-southeast-1.amazonaws.com/airbnb-cyber-api:latest

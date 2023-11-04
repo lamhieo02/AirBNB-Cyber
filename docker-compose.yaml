@@ -1,19 +1,18 @@
 version: '3.9'
 
 services:
-  go-mysql:
-    image: mysql
-    container_name: go01_mysql
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=109339Lam@
-      - MYSQL_DATABASE=go-airbnb
-    volumes:
-      - database_mysql:/var/lib/mysql
-    networks:
-      - go01-airbnb
-
+  # go-mysql:
+  #   image: mysql
+  #   container_name: go01_mysql
+  #   ports:
+  #     - "3306:3306"
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=109339Lam@
+  #     - MYSQL_DATABASE=go-airbnb
+  #   volumes:
+  #     - database_mysql:/var/lib/mysql
+  #   networks:
+  #     - go01-airbnb
   redis:
     image: redis:alpine
     container_name: redis
@@ -24,7 +23,7 @@ services:
 
   api:
     depends_on:
-      - go-mysql
+      # - go-mysql
       - redis
     build:
       context: .
@@ -34,8 +33,8 @@ services:
       - "8080:8080"
     networks:
       - go01-airbnb
-volumes:
-  database_mysql:
+# volumes:
+#   database_mysql:
 
 networks:
   go01-airbnb:

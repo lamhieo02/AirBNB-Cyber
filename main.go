@@ -1,7 +1,6 @@
 package main
 
 import (
-	"go01-airbnb/cache"
 	"go01-airbnb/config"
 	amenityhttp "go01-airbnb/internal/amenity/delivery/http"
 	amenityrepository "go01-airbnb/internal/amenity/repository"
@@ -30,7 +29,6 @@ import (
 	userrepository "go01-airbnb/internal/user/repository"
 	userusecase "go01-airbnb/internal/user/usecase"
 	"go01-airbnb/pkg/db/mysql"
-	dbredis "go01-airbnb/pkg/db/redis"
 	"go01-airbnb/pkg/logger"
 	"go01-airbnb/pkg/upload"
 	"go01-airbnb/pkg/utils"
@@ -62,10 +60,10 @@ func main() {
 
 	utils.RunDBMigration(cfg)
 	// Declare redis
-	redis, err := dbredis.NewRedisClient(cfg)
-	if err != nil {
-		log.Fatalln("Can not connect redis: ", err)
-	}
+	// redis, err := dbredis.NewRedisClient(cfg)
+	// if err != nil {
+	// 	log.Fatalln("Can not connect redis: ", err)
+	// }
 
 	// Declare S3 AWS
 	s3Provider := upload.NewS3Provider(cfg)
@@ -83,7 +81,7 @@ func main() {
 	placeHdl := placehttp.NewPlaceHandler(placeUC, hasher)
 
 	userRepo := userrepository.NewUserRepository(db)
-	userCache := cache.NewAuthUserCache(userRepo, cache.NewRedisCache(redis))
+	// userCache := cache.NewAuthUserCache(userRepo, cache.NewRedisCache(redis))
 	userUC := userusecase.NewUserUseCase(cfg, userRepo)
 	userHdl := userhttp.NewUserHandler(userUC)
 
@@ -114,7 +112,9 @@ func main() {
 	locationUC := locationusecase.NewLocationUseCase(locationRepo)
 	locationHdl := locationhttp.NewLocationHandler(locationUC, hasher)
 
-	middlewares := middleware.NewMiddlewareManager(cfg, userCache)
+	//middlewares := middleware.NewMiddlewareManager(cfg, userCache)
+	middlewares := middleware.NewMiddlewareManager(cfg, userRepo)
+
 	router := gin.Default()
 
 	// fix error CORS

@@ -28,8 +28,8 @@ aws:
 
 
 redis:
-  #Host: redis
-  Host: localhost
+  Host: redis
+  #Host: localhost
   Port: 6379
   Password: ""
   DB: 0

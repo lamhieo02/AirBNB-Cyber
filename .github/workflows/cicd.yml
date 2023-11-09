@@ -49,4 +49,4 @@ jobs:
           sudo su
           docker stop $(docker ps -a -q)
           docker rm $(docker ps -a -q)
-          docker run --name AppBE -d -p 8080:8080 492654507682.dkr.ecr.ap-southeast-1.amazonaws.com/airbnb-cyber-api:latest
+          docker run --name AppBE -d -p 8080:8080 ${{ secrets.AWS_ECR_IMAGE }}

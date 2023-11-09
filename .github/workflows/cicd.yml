@@ -36,8 +36,8 @@ jobs:
     - name: Build and push Docker image
       run: |
         docker build -t airbnb-cyber-api .
-        docker tag airbnb-cyber-api:latest 492654507682.dkr.ecr.ap-southeast-1.amazonaws.com/airbnb-cyber-api:latest
-        docker push 492654507682.dkr.ecr.ap-southeast-1.amazonaws.com/airbnb-cyber-api:latest
+        docker tag airbnb-cyber-api:latest ${{ secrets.AWS_ECR_IMAGE }}
+        docker push ${{ secrets.AWS_ECR_IMAGE }}
     
     - name: Deploy to Server EC2
       uses: appleboy/ssh-action@master
